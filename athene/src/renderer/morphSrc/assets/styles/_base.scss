@@ -1,0 +1,68 @@
+// =============================================================================
+// BASE
+// Global body styling — the dark radial-gradient backdrop + animated
+// grid overlay that gives Singularity Engine its terminal-inspired
+// look. Lifted from morpheus/devApp's _base.scss, with the
+// `#morpheus-ui` selector scoping stripped: athene's main app doesn't
+// share its viewport with another shell, so styles apply at body
+// level. The devApp re-scopes everything under its own `#morpheus-ui`
+// wrapper, so these globals don't leak into it.
+// =============================================================================
+
+@use 'variables' as *;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: $tertiary;
+  background: radial-gradient(ellipse at 20% 20%, rgba(14, 110, 158, 0.21) 0%, #000000 50%),
+              radial-gradient(ellipse at 80% 80%, rgb(0, 92, 95) 0%, transparent 50%),
+              rgba(0, 12, 21, 0.91);
+  // The body becomes the canvas; #root paints on top, the ::before
+  // grid overlay sits behind everything in #root.
+  position: relative;
+  overflow: hidden;
+}
+
+// Animated grid overlay — sits behind app content, gives the
+// terminal/CRT feel without competing for legibility.
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(14, 110, 158, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 110, 158, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  overflow: auto;
+}
+
+// Entry-fade animation — singular global utility for "this thing just
+// appeared." Used by view roots after they finish their initial load.
+.fade-in {
+  opacity: 0;
+  animation: singularity-fade-in 1s ease forwards;
+}
+
+@keyframes singularity-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

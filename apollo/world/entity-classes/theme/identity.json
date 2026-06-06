@@ -1,0 +1,7 @@
+{
+  "id": "theme",
+  "singular": "theme",
+  "plural": "themes",
+  "description": "A WordPress theme tracked in the knowledge base.",
+  "profileImgUrl": null
+}

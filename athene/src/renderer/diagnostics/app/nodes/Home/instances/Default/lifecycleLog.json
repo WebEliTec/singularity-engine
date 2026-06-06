@@ -1,0 +1,25 @@
+{
+  "resource": "instance.lifecycle",
+  "nodeId": "Home",
+  "instanceId": "Default",
+  "entries": [
+    {
+      "timestamp": "2026-06-06T10:30:25.724Z",
+      "hook": "kernelDidInitialize",
+      "nodeId": "Home",
+      "instanceId": "Default"
+    },
+    {
+      "timestamp": "2026-06-06T10:30:25.726Z",
+      "hook": "signalsDidInitialize",
+      "nodeId": "Home",
+      "instanceId": "Default"
+    },
+    {
+      "timestamp": "2026-06-06T10:30:25.729Z",
+      "hook": "nodeDidMount",
+      "nodeId": "Home",
+      "instanceId": "Default"
+    }
+  ]
+}

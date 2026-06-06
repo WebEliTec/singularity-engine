@@ -1,0 +1,19 @@
+{
+  "resource": "instance.kernelDidExecuteDeltas",
+  "nodeId": "EntityClassWorkbench",
+  "instanceId": "Default",
+  "entries": [
+    {
+      "timestamp": "2026-06-06T10:30:21.995Z",
+      "changedSignals": [
+        "selectedAttributeSetVersionId"
+      ],
+      "deltas": {
+        "signals.selectedAttributeSetVersionId.value": {
+          "before": "",
+          "after": "2"
+        }
+      }
+    }
+  ]
+}

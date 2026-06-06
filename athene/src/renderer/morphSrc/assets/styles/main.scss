@@ -1,0 +1,33 @@
+// =============================================================================
+// SINGULARITY ENGINE — APP STYLES
+// Entry point imported once in the root module of the root node
+// (per morphDocs example 03). Mirrors the structure of
+// morpheus/devApp/assets/styles/index.scss but only carries the
+// foundation + components Singularity Engine actually uses; the
+// devApp's per-view partials live alongside their own views.
+// =============================================================================
+
+// Foundation
+@use 'variables';
+@use 'base';
+
+// Shared
+@use 'typography';
+@use 'components';
+@use 'engine-brand';
+
+// App shell
+@use 'sidebar';
+@use 'agent-console';
+
+// Global components
+@use 'panel-alpha';
+@use 'list-alpha';
+@use 'page-header-alpha';
+
+// Views
+@use 'entity-class-explorer';
+@use 'home';
+@use 'entity-class-workbench';
+@use 'chronos';
+@use 'hermes';

@@ -1,0 +1,5 @@
+{
+  "id": "sellable",
+  "label": "Sellable",
+  "description": "Grants the attributes and relation-eligibility a plugin needs to be sold (pricing, currency)."
+}

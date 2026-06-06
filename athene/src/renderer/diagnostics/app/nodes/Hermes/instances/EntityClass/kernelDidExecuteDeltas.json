@@ -1,0 +1,125 @@
+{
+  "resource": "instance.kernelDidExecuteDeltas",
+  "nodeId": "Hermes",
+  "instanceId": "EntityClass",
+  "entries": [
+    {
+      "timestamp": "2026-06-06T10:30:24.917Z",
+      "changedSignals": [
+        "loadingResource",
+        "resourceError"
+      ],
+      "deltas": {
+        "signals.loadingResource.value": {
+          "before": false,
+          "after": true
+        }
+      }
+    },
+    {
+      "timestamp": "2026-06-06T10:30:24.924Z",
+      "changedSignals": [
+        "indexData",
+        "loadingResource"
+      ],
+      "deltas": {
+        "signals.indexData.value.0": {
+          "after": {
+            "_raw": {
+              "id": "company",
+              "singular": "company",
+              "plural": "company",
+              "description": "company",
+              "profileImgUrl": null
+            },
+            "attributeSetVersions": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "traits": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "compositionSchemeVersions": {
+              "_byId": {},
+              "_loaded": false
+            }
+          }
+        },
+        "signals.indexData.value.1": {
+          "after": {
+            "_raw": {
+              "id": "plugin",
+              "singular": "plugin",
+              "plural": "plugins",
+              "description": "A WordPress plugin tracked in the knowledge base.",
+              "profileImgUrl": null
+            },
+            "attributeSetVersions": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "traits": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "compositionSchemeVersions": {
+              "_byId": {},
+              "_loaded": false
+            }
+          }
+        },
+        "signals.indexData.value.2": {
+          "after": {
+            "_raw": {
+              "id": "plugingroup",
+              "singular": "plugin_group",
+              "plural": "plugin_groups",
+              "description": "Some description",
+              "profileImgUrl": null
+            },
+            "attributeSetVersions": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "traits": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "compositionSchemeVersions": {
+              "_byId": {},
+              "_loaded": false
+            }
+          }
+        },
+        "signals.indexData.value.3": {
+          "after": {
+            "_raw": {
+              "id": "theme",
+              "singular": "theme",
+              "plural": "themes",
+              "description": "A WordPress theme tracked in the knowledge base.",
+              "profileImgUrl": null
+            },
+            "attributeSetVersions": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "traits": {
+              "_byId": {},
+              "_loaded": false
+            },
+            "compositionSchemeVersions": {
+              "_byId": {},
+              "_loaded": false
+            }
+          }
+        },
+        "signals.loadingResource.value": {
+          "before": true,
+          "after": false
+        }
+      }
+    }
+  ]
+}

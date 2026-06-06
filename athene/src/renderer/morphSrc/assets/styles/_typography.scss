@@ -1,0 +1,94 @@
+// =============================================================================
+// TYPOGRAPHY & UTILITIES
+// Heading classes, body text styles, and the `.panel` utility — lifted
+// verbatim from morpheus/devApp's _typography.scss, with the
+// `#morpheus-ui` selector scoping removed so these apply globally to
+// athene's main app.
+// =============================================================================
+
+@use 'variables' as *;
+
+// -----------------------------------------------------------------------------
+// Headings
+// -----------------------------------------------------------------------------
+
+.dev-heading-alpha {
+  text-transform: uppercase;
+  color: $secondary;
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 15px rgba(165, 249, 252, 0.5);
+}
+
+.dev-heading-beta {
+  color: $secondary;
+  font-size: .875rem;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 10px rgba(165, 249, 252, 0.3);
+}
+
+// -----------------------------------------------------------------------------
+// Running Text
+// -----------------------------------------------------------------------------
+
+.running-text-beta {
+  font-size: .75rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  color: $tertiary;
+}
+
+// -----------------------------------------------------------------------------
+// Monospace path / id display
+// -----------------------------------------------------------------------------
+
+.path {
+  font-family: 'Courier New', monospace;
+  color: #00ff41;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+}
+
+td.path,
+.property-value.path {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+// -----------------------------------------------------------------------------
+// Utility
+// -----------------------------------------------------------------------------
+
+.glow-text {
+  text-shadow: 0 0 10px currentColor;
+}
+
+// -----------------------------------------------------------------------------
+// Panel — the boxed container with gradient + scanline overlay that
+// the devApp uses for every group of content. Reusable across views.
+// -----------------------------------------------------------------------------
+
+.panel {
+  background: linear-gradient(180deg, rgba(0, 20, 30, 0.85) 0%, rgba(0, 12, 21, 0.75) 100%);
+  border: 1px solid $secondary-beta;
+  border-radius: .25rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+  }
+}

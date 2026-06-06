@@ -1,0 +1,7 @@
+{
+  "id": "plugin",
+  "singular": "plugin",
+  "plural": "plugins",
+  "description": "A WordPress plugin tracked in the knowledge base.",
+  "profileImgUrl": null
+}

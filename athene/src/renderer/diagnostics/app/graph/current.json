@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-06-06T10:30:25.726Z",
+  "tree": {
+    "id": "Root:Default",
+    "nodeId": "Root",
+    "instanceId": "Default",
+    "mountedAt": 1780741474247,
+    "children": [
+      {
+        "id": "Home:Default",
+        "nodeId": "Home",
+        "instanceId": "Default",
+        "mountedAt": 1780741825726,
+        "children": []
+      }
+    ]
+  }
+}

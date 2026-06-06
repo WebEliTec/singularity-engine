@@ -1,0 +1,331 @@
+{
+  "nodeId": "Chronos",
+  "configDirSubPath": "nodes/Chronos",
+  "executionContext": "mainApp",
+  "rootModuleId": "Root",
+  "config": {
+    "parentId": null,
+    "defaultPaths": {
+      "modules": "/modules",
+      "components": "/components",
+      "kernelFragments": "/kernel"
+    },
+    "styles": {
+      "inherit": true
+    },
+    "autoDiscover": {}
+  },
+  "constants": {},
+  "metaDataSchemas": {},
+  "metaData": {
+    "description": "A generic version-management engine for one kind of versioned schema: it shows every version of that schema as a strip of chips (each marked Draft or Committed) and lets the user select a version, start a new draft, commit a draft to make it permanent, or delete a draft. Committed versions are permanent and cannot be changed or removed."
+  },
+  "coreDataSchemas": {
+    "versionCollectionMeta": {
+      "required": true,
+      "type": "object",
+      "description": "Describes the version family: { collectionId, singular, plural, collectionLabel }. Drives the strip header + chip labels."
+    }
+  },
+  "coreData": {
+    "versionCollectionMeta": {
+      "collectionId": "version_collection",
+      "singular": "Version",
+      "plural": "Versions",
+      "collectionLabel": "Versions"
+    }
+  },
+  "runtimeDataSchemas": {},
+  "runtimeData": {},
+  "optionSchemas": {},
+  "options": {},
+  "signalGroups": {
+    "signals": {
+      "signals": {
+        "versionList": {
+          "type": "array",
+          "default": []
+        },
+        "loadingVersions": {
+          "type": "boolean",
+          "default": false
+        },
+        "versionsError": {
+          "type": "string",
+          "default": ""
+        },
+        "selectedVersionId": {
+          "type": "string",
+          "default": ""
+        },
+        "actionInFlight": {
+          "type": "boolean",
+          "default": false
+        },
+        "pendingDeleteId": {
+          "type": "string",
+          "default": ""
+        },
+        "actionError": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    }
+  },
+  "signals": {},
+  "modules": {
+    "Root": {
+      "isRoot": true,
+      "description": "The overall layout: the strip of version chips on top with the lifecycle action buttons directly beneath it.",
+      "component": "[fn:Root]",
+      "subPath": "nodes/Chronos/modules/Root",
+      "inheritanceLevel": "echo"
+    },
+    "VersionList": {
+      "description": "The horizontal strip of version chips. Each chip shows a version and whether it is a Draft or Committed; clicking a chip selects that version, which then opens it elsewhere in the workbench.",
+      "component": "[fn:VersionList]",
+      "subPath": "nodes/Chronos/modules/VersionList",
+      "inheritanceLevel": "echo"
+    },
+    "ActionRow": {
+      "description": "The row of action buttons below the strip. It always offers creating a new draft version; when the selected version is a draft it also offers committing it or deleting it. Deleting a draft first shows an inline confirmation prompt before it is removed.",
+      "component": "[fn:ActionRow]",
+      "subPath": "nodes/Chronos/modules/ActionRow",
+      "inheritanceLevel": "echo"
+    }
+  },
+  "components": {},
+  "moduleProps": {},
+  "instances": {
+    "Default": {
+      "metaData": {
+        "description": "A generic version-management engine for one kind of versioned schema: it shows every version of that schema as a strip of chips (each marked Draft or Committed) and lets the user select a version, start a new draft, commit a draft to make it permanent, or delete a draft. Committed versions are permanent and cannot be changed or removed."
+      },
+      "coreData": {
+        "versionCollectionMeta": {
+          "collectionId": "version_collection",
+          "singular": "Version",
+          "plural": "Versions",
+          "collectionLabel": "Versions"
+        }
+      },
+      "options": {},
+      "moduleProps": {},
+      "hooks": {
+        "kernelDidInitialize": "[fn:kernelDidInitialize]",
+        "nodeWillUnmount": "[fn:nodeWillUnmount]",
+        "nodeDidMount": "[fn:nodeDidMount]"
+      },
+      "nodeEvents": {},
+      "nodeEventHandlers": {},
+      "appEventHandlers": {},
+      "coreFunctions": {
+        "fetchAllVersions": "[fn:fetchAllVersions]",
+        "createNewVersion": "[fn:createNewVersion]",
+        "commitVersion": "[fn:commitVersion]",
+        "deleteDraftVersion": "[fn:deleteDraftVersion]",
+        "selectVersion": "[fn:selectVersion]"
+      }
+    },
+    "AttributeSetVersion": {
+      "metaData": {
+        "description": "Manages the versions of the attribute schema for the entity class the user is currently working in: pick a version to view, start a new draft, commit a draft to lock it in, or delete a draft. Each version is one draft-or-committed revision of that class's set of attributes (its fields)."
+      },
+      "coreData": {
+        "versionCollectionMeta": {
+          "collectionId": "attribute_set_version",
+          "singular": "Version",
+          "plural": "Versions",
+          "collectionLabel": "Attribute Set Versions"
+        }
+      },
+      "options": {},
+      "moduleProps": {},
+      "hooks": {
+        "kernelDidInitialize": "[fn:kernelDidInitialize]",
+        "nodeWillUnmount": "[fn:nodeWillUnmount]",
+        "nodeDidMount": "[fn:nodeDidMount]"
+      },
+      "nodeEvents": {},
+      "nodeEventHandlers": {},
+      "appEventHandlers": {},
+      "coreFunctions": {
+        "fetchAllVersions": "[fn:fetchAllVersions]",
+        "createNewVersion": "[fn:createNewVersion]",
+        "commitVersion": "[fn:commitVersion]",
+        "deleteDraftVersion": "[fn:deleteDraftVersion]",
+        "selectVersion": "[fn:selectVersion]"
+      }
+    },
+    "TraitAttributeSetVersion": {
+      "metaData": {
+        "description": "Manages the versions of a trait's attribute schema — the attribute sets of the trait the user has drilled into: pick a version to view, start a new draft, commit a draft to lock it in, or delete a draft. Each version is one draft-or-committed revision of that trait's set of attributes."
+      },
+      "coreData": {
+        "versionCollectionMeta": {
+          "collectionId": "trait_attribute_set_version",
+          "singular": "Version",
+          "plural": "Versions",
+          "collectionLabel": "Trait Attribute Set Versions"
+        }
+      },
+      "options": {},
+      "moduleProps": {},
+      "hooks": {
+        "kernelDidInitialize": "[fn:kernelDidInitialize]",
+        "nodeWillUnmount": "[fn:nodeWillUnmount]",
+        "nodeDidMount": "[fn:nodeDidMount]"
+      },
+      "nodeEvents": {},
+      "nodeEventHandlers": {},
+      "appEventHandlers": {},
+      "coreFunctions": {
+        "fetchAllVersions": "[fn:fetchAllVersions]",
+        "createNewVersion": "[fn:createNewVersion]",
+        "commitVersion": "[fn:commitVersion]",
+        "deleteDraftVersion": "[fn:deleteDraftVersion]",
+        "selectVersion": "[fn:selectVersion]"
+      }
+    },
+    "CompositionSchemeVersion": {
+      "metaData": {
+        "description": "Manages the versions of the composition scheme for the entity class the user is currently working in — how the class is composed of other classes: pick a version to view, start a new draft, commit a draft to lock it in, or delete a draft. Each version is one draft-or-committed revision of that class's set of composition directives."
+      },
+      "coreData": {
+        "versionCollectionMeta": {
+          "collectionId": "composition_scheme_version",
+          "singular": "Version",
+          "plural": "Versions",
+          "collectionLabel": "Composition Scheme Versions"
+        }
+      },
+      "options": {},
+      "moduleProps": {},
+      "hooks": {
+        "kernelDidInitialize": "[fn:kernelDidInitialize]",
+        "nodeWillUnmount": "[fn:nodeWillUnmount]",
+        "nodeDidMount": "[fn:nodeDidMount]"
+      },
+      "nodeEvents": {},
+      "nodeEventHandlers": {},
+      "appEventHandlers": {},
+      "coreFunctions": {
+        "fetchAllVersions": "[fn:fetchAllVersions]",
+        "createNewVersion": "[fn:createNewVersion]",
+        "commitVersion": "[fn:commitVersion]",
+        "deleteDraftVersion": "[fn:deleteDraftVersion]",
+        "selectVersion": "[fn:selectVersion]"
+      }
+    }
+  },
+  "kernelFragments": {},
+  "hooks": {
+    "kernelDidInitialize": "[fn:kernelDidInitialize]",
+    "nodeWillUnmount": "[fn:nodeWillUnmount]",
+    "nodeDidMount": "[fn:nodeDidMount]"
+  },
+  "nodeEvents": {},
+  "nodeEventHandlers": {},
+  "appEventHandlers": {},
+  "coreFunctionSchemas": {
+    "fetchAllVersions": {
+      "async": true,
+      "remoteable": false,
+      "params": [],
+      "returns": "array",
+      "description": "Returns the full list of versions for this instance at the current scope. Each element is a domain object exposing at minimum .id and .lifeCycleStage. Called by nodeDidMount and again after every lifecycle action."
+    },
+    "createNewVersion": {
+      "async": true,
+      "remoteable": false,
+      "params": [],
+      "returns": "void",
+      "description": "Creates a new draft version for this instance at the current scope (empty-start; fork-from-latest-committed is a deferred follow-up — see the Chronos beta E5+), reloads versionList, and selects the new draft. Bound to the World tree in the instance block."
+    },
+    "commitVersion": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "versionId",
+          "type": "string",
+          "description": "the version to commit (draft → committed)"
+        }
+      ],
+      "returns": "void",
+      "description": "Commits the given draft version, reloads versionList, and keeps it selected (now committed)."
+    },
+    "deleteDraftVersion": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "versionId",
+          "type": "string",
+          "description": "the draft version to delete (committed versions are immutable)"
+        }
+      ],
+      "returns": "void",
+      "description": "Deletes the given draft version, reloads versionList, and selects the latest remaining version."
+    },
+    "selectVersion": {
+      "async": false,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "versionId",
+          "type": "string",
+          "description": "the version to select"
+        }
+      ],
+      "returns": "void",
+      "description": "Selects the given version — flips this instance's canonical workbench selection (and its mirror + co-mounted editor refresh) via the right Athene setter. Bound per instance so VersionList stays instance-agnostic (T3.3)."
+    }
+  },
+  "coreFunctions": {
+    "fetchAllVersions": "[fn:fetchAllVersions]",
+    "createNewVersion": "[fn:createNewVersion]",
+    "commitVersion": "[fn:commitVersion]",
+    "deleteDraftVersion": "[fn:deleteDraftVersion]",
+    "selectVersion": "[fn:selectVersion]"
+  },
+  "buildScripts": {},
+  "buildArtifacts": {},
+  "buildArtifactSchemas": {},
+  "styles": {
+    "inherit": true,
+    "content": null,
+    "concatenatedFrom": []
+  },
+  "kernelMethods": {
+    "runVersionAction": "[fn:runVersionAction]",
+    "createVersion": "[fn:createVersion]",
+    "commitSelected": "[fn:commitSelected]",
+    "requestDeleteSelected": "[fn:requestDeleteSelected]",
+    "cancelDelete": "[fn:cancelDelete]",
+    "confirmDelete": "[fn:confirmDelete]"
+  },
+  "inheritanceChain": {
+    "alpha": {
+      "nodeId": null,
+      "exists": false
+    },
+    "bravo": {
+      "nodeId": null,
+      "exists": false
+    },
+    "charlie": {
+      "nodeId": null,
+      "exists": false
+    },
+    "delta": {
+      "nodeId": null,
+      "exists": false
+    },
+    "echo": {
+      "nodeId": "Chronos",
+      "exists": true
+    }
+  }
+}

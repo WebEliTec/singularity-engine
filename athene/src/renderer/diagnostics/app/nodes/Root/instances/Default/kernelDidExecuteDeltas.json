@@ -1,0 +1,67 @@
+{
+  "resource": "instance.kernelDidExecuteDeltas",
+  "nodeId": "Root",
+  "instanceId": "Default",
+  "entries": [
+    {
+      "timestamp": "2026-06-06T10:30:21.952Z",
+      "changedSignals": [
+        "currentSurface"
+      ],
+      "deltas": {
+        "signals.currentSurface.value": {
+          "before": "home",
+          "after": "classWorkbench"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-06-06T10:30:24.050Z",
+      "changedSignals": [
+        "currentSurface"
+      ],
+      "deltas": {
+        "signals.currentSurface.value": {
+          "before": "classWorkbench",
+          "after": "home"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-06-06T10:30:24.900Z",
+      "changedSignals": [
+        "currentSurface"
+      ],
+      "deltas": {
+        "signals.currentSurface.value": {
+          "before": "home",
+          "after": "classRegistry"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-06-06T10:30:25.717Z",
+      "changedSignals": [
+        "currentSurface"
+      ],
+      "deltas": {
+        "signals.currentSurface.value": {
+          "before": "classRegistry",
+          "after": "home"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-06-06T10:30:26.413Z",
+      "changedSignals": [
+        "sidebarExpanded"
+      ],
+      "deltas": {
+        "signals.sidebarExpanded.value": {
+          "before": false,
+          "after": true
+        }
+      }
+    }
+  ]
+}

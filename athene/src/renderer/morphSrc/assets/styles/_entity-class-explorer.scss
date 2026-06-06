@@ -1,0 +1,110 @@
+// =============================================================================
+// CONTENT CLASS EXPLORER
+// View-specific styling for nodes/EntityClassExplorer. Mirrors the
+// "view scoped under its own id" convention from morpheus/devApp's
+// per-view partials (`_overview`, `_node-inspector`, …). Composes
+// existing tokens — palette + `.panel` utility — rather than
+// reinventing.
+// =============================================================================
+
+@use 'variables' as *;
+
+#entity-class-explorer {
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+
+  // -------------------------------------------------------------------------
+  // View header
+  // -------------------------------------------------------------------------
+
+  .cce-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cce-count {
+    color: $secondary-darker;
+    font-size: .75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  // -------------------------------------------------------------------------
+  // List
+  // -------------------------------------------------------------------------
+
+  .cce-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cce-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid rgba(14, 110, 158, 0.25);
+    transition: background .15s ease;
+
+    &:hover {
+      background: rgba(14, 110, 158, 0.12);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .cce-name {
+    color: $secondary;
+    font-weight: 500;
+    text-shadow: 0 0 8px rgba(165, 249, 252, 0.25);
+  }
+
+  .cce-meta {
+    font-size: .75rem;
+    color: $tertiary;
+    margin-left: auto;
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+  }
+
+  .cce-meta .stage {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: .65rem;
+    padding: .1rem .4rem;
+    border: 1px solid $secondary-darker;
+    border-radius: .15rem;
+    color: $secondary;
+  }
+
+  // -------------------------------------------------------------------------
+  // Empty state
+  // -------------------------------------------------------------------------
+
+  .cce-empty {
+    padding: 2rem;
+    text-align: center;
+    color: $tertiary;
+    font-style: italic;
+  }
+
+  // -------------------------------------------------------------------------
+  // Loading state
+  // -------------------------------------------------------------------------
+
+  .cce-loading {
+    padding: 2rem;
+    text-align: center;
+    color: $secondary-darker;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: .75rem;
+  }
+}

@@ -1,0 +1,49 @@
+// =============================================================================
+// PAGE HEADER ALPHA — global component
+// Per-page-node identity strip. Engine logo on the left as a faded
+// backdrop, title overlaid using a mask-gradient fade (adapted from
+// devApp's Overview brand at smaller scale, left-aligned).
+// =============================================================================
+
+@use 'variables' as *;
+
+.page-header-alpha {
+  position:    relative;
+  display:     flex;
+  align-items: center;
+  padding:     1rem 2rem;
+  min-height:  100px;
+}
+
+// Logo as backdrop — faded, with the same right-fading mask the devApp
+// uses on the centered version. The visible portion sits on the left
+// half so the title overlay reads cleanly to its right.
+.page-header-alpha .singularity-logo-animated-01 {
+  position: absolute;
+  top: 16px;
+  left: 14px;
+  opacity: 0.5;
+  pointer-events: none;
+
+  svg {
+    mask-image: linear-gradient(to right, #04040489, #000 20%, #690606c8);
+  }
+}
+
+// Title — positioned so its left portion overlaps the logo (first 20%
+// of the mask-gradient fades in over the logo's right half, giving the
+// "title emerges from the cosmic backdrop" effect). Mirrors devApp's
+// vertical overlap (title at top:65px on a 200px logo) rotated 90°.
+.page-header-alpha-title {
+  position:        relative;
+  z-index:         1;
+  margin:          0 0 0 1.5rem;
+  color:           $secondary;
+  text-transform:  uppercase;
+  font-size:       1.25rem;
+  letter-spacing:  0.08em;
+  font-weight:     500;
+  text-shadow:     0 0 15px rgba(165, 249, 252, 0.5);
+  mask-image:      linear-gradient(to right, #04040489, #000 20%, #690606c8);
+  white-space:     nowrap;
+}

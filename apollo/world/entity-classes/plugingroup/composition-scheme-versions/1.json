@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "lifeCycleStage": "draft",
+  "createdAt": "2026-06-03T08:16:05.267Z",
+  "committedAt": null,
+  "compositionDirectives": [
+    {
+      "id": "plugin:sellable",
+      "subClassId": "plugin",
+      "traitId": "sellable",
+      "cardinalityRules": "1",
+      "description": "Some description"
+    }
+  ]
+}

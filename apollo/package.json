@@ -1,0 +1,15 @@
+{
+  "name": "apollo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Apollo — the Singularity Engine world-model backend (Node + Fastify over a file-based content-base). Reimplements the legacy Laravel content-creation-center, slice by slice.",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "fastify": "^5.2.0"
+  }
+}

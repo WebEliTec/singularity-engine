@@ -1,0 +1,39 @@
+// =============================================================================
+// ENGINE BRAND HEADER
+// App-level brand mark — animated SVG sitting as a faded backdrop with
+// the "Singularity Engine" heading absolutely positioned on top.
+// Mirrors morpheus/devApp's `.overview-header` layering.
+//
+// Lifted from _entity-class-explorer.scss (was scoped under
+// #entity-class-explorer) so any view's Root module can render the
+// brand header consistently.
+// =============================================================================
+
+@use 'variables' as *;
+
+.engine-brand {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: flex-start;
+  gap:             1rem;
+  position:        relative;
+  margin-bottom:   1rem;
+}
+
+.engine-brand-title {
+  text-align:      center;
+  color:           $secondary;
+  text-transform:  uppercase;
+  position:        absolute;
+  top: 87px;
+  font-size: 1.5rem;
+  margin:          0;
+  mask-image:      linear-gradient(to right, #04040489, #000000 20%, #690606c8);
+  text-shadow:     0 0 15px rgba(165, 249, 252, 0.5);
+}
+
+.singularity-logo-animated-01 svg {
+  mask-image: linear-gradient(to right, #04040489, #000 20%, #690606c8);
+  opacity:    .3;
+}

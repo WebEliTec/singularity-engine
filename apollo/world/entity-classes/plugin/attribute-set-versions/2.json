@@ -1,0 +1,36 @@
+{
+  "id": 2,
+  "lifeCycleStage": "draft",
+  "createdAt": "2026-05-20T11:15:00.000Z",
+  "committedAt": null,
+  "attributes": [
+    {
+      "id": "name",
+      "label": "Name",
+      "dataType": "text",
+      "description": "The plugin's display name.",
+      "isRequired": true
+    },
+    {
+      "id": "slug",
+      "label": "Slug",
+      "dataType": "text",
+      "description": "URL-safe identifier.",
+      "isRequired": true
+    },
+    {
+      "id": "version",
+      "label": "Version",
+      "dataType": "text",
+      "description": "Latest released version.",
+      "isRequired": false
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "dataType": "richtext",
+      "description": "Short marketing description.",
+      "isRequired": false
+    }
+  ]
+}

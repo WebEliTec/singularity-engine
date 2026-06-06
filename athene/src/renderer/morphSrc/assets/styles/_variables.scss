@@ -1,0 +1,24 @@
+// =============================================================================
+// VARIABLES
+// Singularity Engine design tokens — mirrors morpheus/devApp/assets/styles/
+// _variables.scss so the two surfaces share the same palette. Lift any
+// future devApp token additions through this file.
+// =============================================================================
+
+// Primary colors
+$primary: #f78166;
+$secondary: #a5f9fc;
+$secondary-beta: #0e6e9e;
+$secondary-darker: #005c5f;
+$tertiary: #a3a3a3;
+
+// Background colors
+$bg-transparent: #000c159f;
+
+// Level colors (inheritance hierarchy — kept for parity with devApp;
+// not yet consumed in athene)
+$level-alpha: #f472b6;
+$level-bravo: #fb923c;
+$level-charlie: #facc15;
+$level-delta: #4ade80;
+$level-echo: $secondary;

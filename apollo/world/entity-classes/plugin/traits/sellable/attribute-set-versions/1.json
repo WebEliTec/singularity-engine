@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "lifeCycleStage": "committed",
+  "createdAt": "2026-05-10T09:00:00.000Z",
+  "committedAt": "2026-05-11T12:00:00.000Z",
+  "attributes": [
+    { "id": "price", "label": "Price", "dataType": "float", "description": "The plugin's sale price.", "isRequired": true },
+    { "id": "currency", "label": "Currency", "dataType": "text", "description": "ISO 4217 currency code.", "isRequired": true }
+  ]
+}

@@ -1,0 +1,290 @@
+// =============================================================================
+// CHRONOS — version-management engine UI
+// A vertical version-rail column: a lifecycle control panel on top
+// (+ New Version / Commit / Delete Draft) and a scrollable, vertically-stacked
+// version list below. Sits as the left column of a version tab, beside the
+// co-mounted Hermes editor. Each version row shows an id + a lifecycle-stage
+// badge — cyan for committed (the "stable" state), amber for draft ("in flight").
+// =============================================================================
+
+@use 'sass:color';
+@use 'variables' as *;
+@use 'panel-chrome' as panel;
+
+// The rail column itself — one panel (chrome) holding the control panel + the
+// scrollable version list. Fixed width; fills the surface height so the list
+// scrolls inside it. Inset from the surface edges via margin; the gap to the
+// Hermes editor on its right comes from #hermes's own left padding.
+.chronos {
+  @include panel.panel-chrome;
+  flex:           0 0 14rem;
+  margin:         2rem 0 2rem 2rem;
+  display:        flex;
+  flex-direction: column;
+  min-height:     0;
+  overflow:       hidden;
+  padding:        0;
+}
+
+// Version list — the scrollable, vertically-stacked chips (+ its header). The
+// panel chrome now lives on `.chronos`, so this is just the scroll region.
+.chronos-strip {
+  flex:       1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding:    .85rem 1rem 1rem;
+}
+
+.chronos-strip-header {
+  position:        relative;
+  z-index:         2;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   .65rem;
+}
+
+.chronos-strip-eyebrow {
+  @include panel.panel-eyebrow;
+  color:       $secondary;
+  text-shadow: 0 0 8px rgba(165, 249, 252, 0.2);
+}
+
+.chronos-strip-count {
+  font-family:   'Courier New', monospace;
+  font-size:     .7rem;
+  color:         $secondary-darker;
+  border:        1px solid rgba(14, 110, 158, 0.4);
+  border-radius: .15rem;
+  padding:       .1rem .4rem;
+  min-width:     1.5rem;
+  text-align:    center;
+}
+
+.chronos-strip-loading,
+.chronos-strip .morpheus-error-box {
+  position: relative;
+  z-index:  2;
+}
+
+.chronos-strip-loading {
+  color:       $secondary-darker;
+  font-style:  italic;
+  font-size:   .85rem;
+  padding:     .25rem 0;
+}
+
+// -----------------------------------------------------------------------------
+// Chips — one per version. Read-only at E1; E2 adds is-active + hover +
+// click. E3 adds per-chip lifecycle-action affordances.
+// -----------------------------------------------------------------------------
+
+.chronos-strip-chips {
+  position:       relative;
+  z-index:        2;
+  display:        flex;
+  flex-direction: column;
+  gap:            .4rem;
+}
+
+.chronos-chip {
+  appearance:      none;
+  font-family:     inherit;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             .5rem;
+  width:           100%;
+  padding:         .5rem .65rem;
+  border:          1px solid $secondary-beta;
+  border-radius:   .2rem;
+  background:      rgba(0, 12, 21, 0.65);
+  text-align:      left;
+  cursor:          pointer;
+  transition:      background .15s ease, border-color .15s ease, box-shadow .15s ease;
+
+  &:hover:not(:disabled) {
+    background:   rgba(14, 110, 158, 0.18);
+    border-color: $secondary;
+  }
+
+  &.is-active {
+    background: linear-gradient(
+      90deg,
+      rgba(14, 110, 158, 0.36) 0%,
+      rgba(14, 110, 158, 0.16) 100%
+    );
+    border-color: $secondary;
+    box-shadow:   inset 0 0 0 1px rgba(165, 249, 252, 0.2),
+                  0 0 12px -2px rgba(165, 249, 252, 0.3);
+    cursor:       default;
+
+    .chronos-chip-id {
+      color:       color.adjust($secondary, $lightness: 6%);
+      text-shadow: 0 0 12px rgba(165, 249, 252, 0.5);
+    }
+  }
+}
+
+.chronos-chip-id {
+  color:          $secondary;
+  font-family:    'Courier New', monospace;
+  font-size:      .85rem;
+  letter-spacing: 0.05em;
+  text-shadow:    0 0 8px rgba(165, 249, 252, 0.25);
+}
+
+// Stage badges: cyan for committed (stable), amber for draft (in flight).
+// Amber is consistent with Hermes's confirm sub-state (delete confirm
+// halo) — same "caution without alarm" register, used here to signal
+// "this version is still mutable, treat with appropriate care."
+.chronos-chip-stage {
+  font-size:      .65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding:        .1rem .4rem;
+  border-radius:  .15rem;
+  font-weight:    500;
+}
+
+.chronos-chip-stage--committed {
+  color:        $secondary;
+  background:   rgba(14, 110, 158, 0.18);
+  border:       1px solid $secondary-beta;
+  text-shadow:  0 0 6px rgba(165, 249, 252, 0.25);
+}
+
+.chronos-chip-stage--draft {
+  color:        #fbbf24;
+  background:   rgba(251, 191, 36, 0.12);
+  border:       1px solid rgba(251, 191, 36, 0.35);
+  text-shadow:  0 0 6px rgba(251, 191, 36, 0.3);
+}
+
+// -----------------------------------------------------------------------------
+// Action row (E3) — lifecycle affordances beneath the strip. "+ New Version"
+// is always available; Commit + Delete Draft appear only when a DRAFT is
+// selected (committed versions are immutable). Delete arms an inline confirm
+// in the amber caution register (consistent with the draft badge + Hermes's
+// confirm sub-state).
+// -----------------------------------------------------------------------------
+
+// Control panel — the lifecycle actions, fixed at the top of the rail above the
+// version list, set off by a divider.
+.chronos-actions {
+  flex-shrink:   0;
+  position:      relative;
+  z-index:       2;
+  padding:       .85rem 1rem;
+  border-bottom: 1px solid rgba(14, 110, 158, 0.35);
+}
+
+.chronos-action-error {
+  color:         #f87171;
+  background:    rgba(248, 113, 113, 0.1);
+  border:        1px solid rgba(248, 113, 113, 0.35);
+  border-radius: .2rem;
+  padding:       .4rem .6rem;
+  font-size:     .8rem;
+  margin-bottom: .6rem;
+}
+
+// Stacked full-width buttons read cleanly in the narrow rail (the column makes
+// each button stretch to the panel width).
+.chronos-action-buttons {
+  display:        flex;
+  flex-direction: column;
+  gap:            .5rem;
+}
+
+.chronos-confirm-actions {
+  display: flex;
+  gap:     .5rem;
+}
+
+.chronos-btn {
+  appearance:     none;
+  font-family:    inherit;
+  font-size:      .8rem;
+  letter-spacing: 0.03em;
+  padding:        .45rem .8rem;
+  border-radius:  .2rem;
+  border:         1px solid $secondary-beta;
+  background:     rgba(0, 12, 21, 0.65);
+  color:          $secondary;
+  cursor:         pointer;
+  transition:     background .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+
+  &:hover:not(:disabled) {
+    background:   rgba(14, 110, 158, 0.18);
+    border-color: $secondary;
+  }
+
+  &:disabled {
+    opacity: .5;
+    cursor:  not-allowed;
+  }
+}
+
+.chronos-btn--primary {
+  border-color: $secondary;
+  background:   rgba(14, 110, 158, 0.22);
+  text-shadow:  0 0 8px rgba(165, 249, 252, 0.25);
+}
+
+.chronos-btn--commit {
+  // Committing is the "promote to stable" act — cyan, the committed accent.
+  border-color: $secondary;
+  color:        color.adjust($secondary, $lightness: 6%);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 12px -2px rgba(165, 249, 252, 0.3);
+  }
+}
+
+.chronos-btn--danger-ghost {
+  border-color: rgba(248, 113, 113, 0.45);
+  color:        #f87171;
+
+  &:hover:not(:disabled) {
+    background:   rgba(248, 113, 113, 0.14);
+    border-color: #f87171;
+  }
+}
+
+.chronos-btn--danger {
+  border-color: rgba(248, 113, 113, 0.6);
+  background:   rgba(248, 113, 113, 0.18);
+  color:        #fca5a5;
+
+  &:hover:not(:disabled) {
+    background:   rgba(248, 113, 113, 0.28);
+    border-color: #f87171;
+  }
+}
+
+.chronos-btn--ghost {
+  color: $secondary-darker;
+}
+
+.chronos-confirm {
+  display:        flex;
+  flex-direction: column;
+  align-items:    stretch;
+  gap:            .6rem;
+  padding:        .55rem .7rem;
+  border:         1px solid rgba(251, 191, 36, 0.35);
+  border-radius:  .2rem;
+  background:     rgba(251, 191, 36, 0.08);
+}
+
+.chronos-confirm-prompt {
+  font-size: .82rem;
+  color:     #fcd34d;
+
+  strong { color: #fde68a; }
+}
+
+.chronos-confirm-icon {
+  margin-right: .35rem;
+}

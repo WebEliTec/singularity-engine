@@ -1,0 +1,1479 @@
+{
+  "snapshot": "nodeDidMount",
+  "timestamp": "2026-06-06T10:30:24.922Z",
+  "id": "Hermes:EntityClass",
+  "nodeId": "Hermes",
+  "instanceId": "EntityClass",
+  "props": {
+    "parentId": "EntityClassRegistry:Default"
+  },
+  "parentId": "EntityClassRegistry:Default",
+  "constants": {},
+  "metaDataSchemas": {},
+  "metaData": {
+    "description": "Manages the registry of entity classes (the types of things modeled, such as plugin or theme): browse the classes and create, edit, or delete a class."
+  },
+  "coreDataSchemas": {
+    "resourceCollectionMeta": {
+      "required": true,
+      "type": "object",
+      "description": "Describes the collection: { collectionId, singular, plural, resourceLabel }. Drives the index header + plural references throughout the UI."
+    },
+    "resourceClassMeta": {
+      "required": true,
+      "type": "object",
+      "description": "Describes the resource class: { id, singular, plural }. Drives single-resource labels."
+    }
+  },
+  "coreData": {
+    "resourceCollectionMeta": {
+      "collectionId": "content_class",
+      "singular": "Entity Class",
+      "plural": "Entity Classes",
+      "resourceLabel": null
+    },
+    "resourceClassMeta": {
+      "id": "content_class",
+      "singular": "Entity Class",
+      "plural": "Entity Classes"
+    },
+    "inputElements": {
+      "id": {
+        "label": "ID",
+        "inputType": "text",
+        "constraints": {
+          "required": true,
+          "minLength": 2,
+          "pattern": "kebabCase"
+        },
+        "displayConditions": {
+          "mode": [
+            "create"
+          ]
+        }
+      },
+      "singular": {
+        "label": "Singular",
+        "inputType": "text",
+        "constraints": {
+          "required": true,
+          "minLength": 2,
+          "pattern": "smallLettersAndUnderscores"
+        }
+      },
+      "plural": {
+        "label": "Plural",
+        "inputType": "text",
+        "constraints": {
+          "required": true,
+          "minLength": 2,
+          "pattern": "smallLettersAndUnderscores"
+        }
+      },
+      "description": {
+        "label": "Description",
+        "inputType": "text",
+        "constraints": {
+          "required": true
+        }
+      }
+    }
+  },
+  "runtimeDataSchemas": {},
+  "runtimeData": {},
+  "optionSchemas": {
+    "viewAction": {
+      "required": false,
+      "type": "object",
+      "default": null,
+      "description": "Optional drill-in action shown while viewing a selected resource — a button in ViewHeader (view mode only). Shape { label, coreFunction }: `label` is the button text; `coreFunction` names a coreFunction invoked as (kernel, selectedResourceId) on click. Default null ⇒ no button."
+    }
+  },
+  "options": {
+    "viewAction": {
+      "label": "Manage Entity Class",
+      "coreFunction": "manageSingleEntityClass"
+    }
+  },
+  "coreFunctionSchemas": {
+    "fetchAllResources": {
+      "async": true,
+      "remoteable": false,
+      "params": [],
+      "returns": "array",
+      "description": "Returns the full list of resources for this Hermes instance. Each element should expose at minimum an `id` and a `displayName` (or comparable label) that ResourceList can render. Called by `ResourceIO.loadAllResources` on mount and on every return-to-index."
+    },
+    "fetchSingleResource": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "resourceId",
+          "type": "string"
+        }
+      ],
+      "returns": "object",
+      "description": "Returns the full data for one resource. Called when the user selects a row from ResourceList. G2."
+    },
+    "createSingleResource": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "values",
+          "type": "object"
+        }
+      ],
+      "returns": "object",
+      "description": "Creates a new resource from the working copy. G7."
+    },
+    "updateSingleResource": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "resourceId",
+          "type": "string"
+        },
+        {
+          "name": "values",
+          "type": "object"
+        }
+      ],
+      "returns": "object",
+      "description": "Updates an existing resource. G4."
+    },
+    "deleteSingleResource": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "resourceId",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "description": "Deletes a resource by id. G8."
+    },
+    "registerKernel": {
+      "async": false,
+      "remoteable": false,
+      "params": [],
+      "returns": "void",
+      "description": "Per-instance kernel-init hook, called once from kernelDidInitialize after the Hermes orchestrator is attached. Default no-op; instances needing cross-node coordination override it to register their kernel with Athene (e.g. Attribute / TraitAttribute, for the selection-driven in-place scope refresh)."
+    },
+    "unregisterKernel": {
+      "async": false,
+      "remoteable": false,
+      "params": [],
+      "returns": "void",
+      "description": "Per-instance teardown hook, called once from nodeWillUnmount (MF-1) — the symmetric partner of registerKernel. Instances that registered with Athene override this to unregister (identity-guarded), so a racing async continuation never pokes this torn-down kernel."
+    },
+    "resolveFieldOptions": {
+      "async": false,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "fieldId",
+          "type": "string"
+        }
+      ],
+      "returns": "array",
+      "description": "SYNCHRONOUS options provider for a data-driven select input (C3). Called by getVisibleInputElements for any inputElement marked `dynamicOptions: true`, to source its `options: [{value,label}]` at render time from live domain state instead of a baked enum. Default returns []. Instances with a data-driven select override it (e.g. CompositionDirective returns the live entity-class list for the `subClassId` sub-class picker). Must stay synchronous — it runs inside the synchronous render pass; read already-warm state, never await."
+    },
+    "resolveFieldOptionsAsync": {
+      "async": true,
+      "remoteable": false,
+      "params": [
+        {
+          "name": "fieldId",
+          "type": "string"
+        },
+        {
+          "name": "dependencyValue",
+          "type": "string"
+        }
+      ],
+      "returns": "array",
+      "description": "ASYNCHRONOUS options provider for a DEPENDENT select (the dependent-fields capability). Called by Hermes.loadAsyncFieldOptions when a `dynamicOptionsAsync` field's dependency changes — the dependency edge is declared once in the field's `displayConditions.dependsOn` — passing the new dependency value. Returns [{value,label}] for that value, typically after a fetch of COLD domain state (e.g. the traits of the chosen sub-class, via EntityClass.loadDetail). The result is cached in the dynamicOptionsCache signal + read back synchronously at render, so the render itself never awaits. Default returns []. Instances override it (e.g. CompositionDirective loads the sub-class's traits for `traitId`)."
+    }
+  },
+  "coreFunctions": {
+    "fetchAllResources": "[fn:fetchAllResources]",
+    "fetchSingleResource": "[fn:fetchSingleResource]",
+    "createSingleResource": "[fn:createSingleResource]",
+    "updateSingleResource": "[fn:updateSingleResource]",
+    "deleteSingleResource": "[fn:deleteSingleResource]",
+    "registerKernel": "[fn:registerKernel]",
+    "unregisterKernel": "[fn:unregisterKernel]",
+    "resolveFieldOptions": "[fn:resolveFieldOptions]",
+    "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]",
+    "manageSingleEntityClass": "[fn:manageSingleEntityClass]"
+  },
+  "buildArtifactSchemas": {},
+  "buildArtifacts": {},
+  "signalGroups": {
+    "signals": {
+      "signals": {
+        "mode": {
+          "type": "string",
+          "default": "index"
+        },
+        "status": {
+          "type": "string",
+          "default": "normal"
+        },
+        "selectedResourceId": {
+          "type": "string",
+          "default": ""
+        },
+        "indexData": {
+          "type": "array",
+          "default": []
+        },
+        "singleResourceData": {
+          "type": "object",
+          "default": null
+        },
+        "singleResourceDataWorkingCopy": {
+          "type": "object",
+          "default": {}
+        },
+        "singleResourceDataEvaluation": {
+          "type": "object",
+          "default": {}
+        },
+        "loadingResource": {
+          "type": "boolean",
+          "default": false
+        },
+        "resourceError": {
+          "type": "string",
+          "default": ""
+        },
+        "systemMessage": {
+          "type": "string",
+          "default": ""
+        },
+        "dynamicOptionsCache": {
+          "type": "object",
+          "default": {}
+        }
+      }
+    }
+  },
+  "optimisticSignals": {
+    "mode": {
+      "id": "mode",
+      "type": "string",
+      "value": "index",
+      "set": "[fn:set]"
+    },
+    "status": {
+      "id": "status",
+      "type": "string",
+      "value": "normal",
+      "set": "[fn:set]"
+    },
+    "selectedResourceId": {
+      "id": "selectedResourceId",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "indexData": {
+      "id": "indexData",
+      "type": "array",
+      "value": [
+        {
+          "_raw": {
+            "id": "company",
+            "singular": "company",
+            "plural": "company",
+            "description": "company",
+            "profileImgUrl": null
+          },
+          "attributeSetVersions": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "traits": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "compositionSchemeVersions": {
+            "_byId": {},
+            "_loaded": false
+          }
+        },
+        {
+          "_raw": {
+            "id": "plugin",
+            "singular": "plugin",
+            "plural": "plugins",
+            "description": "A WordPress plugin tracked in the knowledge base.",
+            "profileImgUrl": null
+          },
+          "attributeSetVersions": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "traits": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "compositionSchemeVersions": {
+            "_byId": {},
+            "_loaded": false
+          }
+        },
+        {
+          "_raw": {
+            "id": "plugingroup",
+            "singular": "plugin_group",
+            "plural": "plugin_groups",
+            "description": "Some description",
+            "profileImgUrl": null
+          },
+          "attributeSetVersions": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "traits": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "compositionSchemeVersions": {
+            "_byId": {},
+            "_loaded": false
+          }
+        },
+        {
+          "_raw": {
+            "id": "theme",
+            "singular": "theme",
+            "plural": "themes",
+            "description": "A WordPress theme tracked in the knowledge base.",
+            "profileImgUrl": null
+          },
+          "attributeSetVersions": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "traits": {
+            "_byId": {},
+            "_loaded": false
+          },
+          "compositionSchemeVersions": {
+            "_byId": {},
+            "_loaded": false
+          }
+        }
+      ],
+      "set": "[fn:set]"
+    },
+    "singleResourceData": {
+      "id": "singleResourceData",
+      "type": "object",
+      "value": null,
+      "set": "[fn:set]"
+    },
+    "singleResourceDataWorkingCopy": {
+      "id": "singleResourceDataWorkingCopy",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    },
+    "singleResourceDataEvaluation": {
+      "id": "singleResourceDataEvaluation",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    },
+    "loadingResource": {
+      "id": "loadingResource",
+      "type": "boolean",
+      "value": false,
+      "set": "[fn:set]"
+    },
+    "resourceError": {
+      "id": "resourceError",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "systemMessage": {
+      "id": "systemMessage",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "dynamicOptionsCache": {
+      "id": "dynamicOptionsCache",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    }
+  },
+  "executionContext": "mainApp",
+  "_nodeResources": {
+    "nodeId": "Hermes",
+    "configDirSubPath": "nodes/Hermes",
+    "executionContext": "mainApp",
+    "rootModuleId": "Root",
+    "config": {
+      "parentId": null,
+      "defaultPaths": {
+        "modules": "/modules",
+        "components": "/components",
+        "kernelFragments": "/kernel"
+      },
+      "styles": {
+        "inherit": true
+      },
+      "autoDiscover": {}
+    },
+    "constants": {},
+    "metaDataSchemas": {},
+    "metaData": {
+      "description": "A generic workbench for one kind of record: it lists every record on the left and lets the user view, create, edit, and delete a record in the pane on the right."
+    },
+    "coreDataSchemas": {
+      "resourceCollectionMeta": {
+        "required": true,
+        "type": "object",
+        "description": "Describes the collection: { collectionId, singular, plural, resourceLabel }. Drives the index header + plural references throughout the UI."
+      },
+      "resourceClassMeta": {
+        "required": true,
+        "type": "object",
+        "description": "Describes the resource class: { id, singular, plural }. Drives single-resource labels."
+      }
+    },
+    "coreData": {
+      "resourceCollectionMeta": {
+        "collectionId": "resource_collection",
+        "singular": "Resource Collection",
+        "plural": "Resource Collections",
+        "resourceLabel": null
+      },
+      "resourceClassMeta": {
+        "id": "resource_class",
+        "singular": "Resource Class",
+        "plural": "Resource Classes"
+      }
+    },
+    "runtimeDataSchemas": {},
+    "runtimeData": {},
+    "optionSchemas": {
+      "viewAction": {
+        "required": false,
+        "type": "object",
+        "default": null,
+        "description": "Optional drill-in action shown while viewing a selected resource — a button in ViewHeader (view mode only). Shape { label, coreFunction }: `label` is the button text; `coreFunction` names a coreFunction invoked as (kernel, selectedResourceId) on click. Default null ⇒ no button."
+      }
+    },
+    "options": {},
+    "signalGroups": {
+      "signals": {
+        "signals": {
+          "mode": {
+            "type": "string",
+            "default": "index"
+          },
+          "status": {
+            "type": "string",
+            "default": "normal"
+          },
+          "selectedResourceId": {
+            "type": "string",
+            "default": ""
+          },
+          "indexData": {
+            "type": "array",
+            "default": []
+          },
+          "singleResourceData": {
+            "type": "object",
+            "default": null
+          },
+          "singleResourceDataWorkingCopy": {
+            "type": "object",
+            "default": {}
+          },
+          "singleResourceDataEvaluation": {
+            "type": "object",
+            "default": {}
+          },
+          "loadingResource": {
+            "type": "boolean",
+            "default": false
+          },
+          "resourceError": {
+            "type": "string",
+            "default": ""
+          },
+          "systemMessage": {
+            "type": "string",
+            "default": ""
+          },
+          "dynamicOptionsCache": {
+            "type": "object",
+            "default": {}
+          }
+        }
+      }
+    },
+    "signals": {},
+    "modules": {
+      "Root": {
+        "isRoot": true,
+        "description": "The overall two-pane layout: the list of records on the left and the content pane on the right.",
+        "component": "[fn:Root]",
+        "subPath": "nodes/Hermes/modules/Root",
+        "inheritanceLevel": "echo"
+      },
+      "ResourceList": {
+        "description": "The list of all records on the left. Selecting a record opens it in the content pane; the list also has an Index pivot to return to the overview and a \"New\" pivot to start creating a record.",
+        "component": "[fn:ResourceList]",
+        "subPath": "nodes/Hermes/modules/ResourceList",
+        "inheritanceLevel": "echo"
+      },
+      "ContentBody": {
+        "description": "The right-hand content pane that shows whichever screen matches the current activity: the overview, a record's details, the create or edit form, the delete confirmation, or a success/error result.",
+        "component": "[fn:ContentBody]",
+        "subPath": "nodes/Hermes/modules/ContentBody",
+        "inheritanceLevel": "echo"
+      },
+      "IndexHeader": {
+        "description": "The heading at the top of the overview, naming this kind of record and showing how many exist.",
+        "component": "[fn:IndexHeader]",
+        "subPath": "nodes/Hermes/modules/IndexHeader",
+        "inheritanceLevel": "echo"
+      },
+      "IndexBody": {
+        "description": "The overview screen shown before any record is selected; it prompts the user to pick a record from the list to view it.",
+        "component": "[fn:IndexBody]",
+        "subPath": "nodes/Hermes/modules/IndexBody",
+        "inheritanceLevel": "echo"
+      },
+      "ViewHeader": {
+        "description": "The heading shown while viewing one record; it names the record and offers Edit and Delete actions for it.",
+        "component": "[fn:ViewHeader]",
+        "subPath": "nodes/Hermes/modules/ViewHeader",
+        "inheritanceLevel": "echo"
+      },
+      "ViewBody": {
+        "description": "The read-only details of the selected record, showing each of its fields and values.",
+        "component": "[fn:ViewBody]",
+        "subPath": "nodes/Hermes/modules/ViewBody",
+        "inheritanceLevel": "echo"
+      },
+      "EditHeader": {
+        "description": "The heading shown while editing a record; it names the record and offers Save (enabled once a field changes) and Discard actions.",
+        "component": "[fn:EditHeader]",
+        "subPath": "nodes/Hermes/modules/EditHeader",
+        "inheritanceLevel": "echo"
+      },
+      "EditBody": {
+        "description": "The editable form for a record, with one input per field; used for both editing an existing record and filling in a new one.",
+        "component": "[fn:EditBody]",
+        "subPath": "nodes/Hermes/modules/EditBody",
+        "inheritanceLevel": "echo"
+      },
+      "EditOnSuccess": {
+        "description": "The confirmation shown after an edit is saved; it offers to keep editing the same record or return to its details.",
+        "component": "[fn:EditOnSuccess]",
+        "subPath": "nodes/Hermes/modules/EditOnSuccess",
+        "inheritanceLevel": "echo"
+      },
+      "EditOnError": {
+        "description": "The screen shown when saving an edit fails; it shows the error and lets the user retry, go back to editing with their changes kept, or discard.",
+        "component": "[fn:EditOnError]",
+        "subPath": "nodes/Hermes/modules/EditOnError",
+        "inheritanceLevel": "echo"
+      },
+      "CreateHeader": {
+        "description": "The heading shown while creating a new record; it offers Create (enabled once a field is filled in) and Discard actions.",
+        "component": "[fn:CreateHeader]",
+        "subPath": "nodes/Hermes/modules/CreateHeader",
+        "inheritanceLevel": "echo"
+      },
+      "CreateOnSuccess": {
+        "description": "The confirmation shown after a new record is created; it offers to create another or go to the new record's details.",
+        "component": "[fn:CreateOnSuccess]",
+        "subPath": "nodes/Hermes/modules/CreateOnSuccess",
+        "inheritanceLevel": "echo"
+      },
+      "CreateOnError": {
+        "description": "The screen shown when creating a record fails (for example a duplicate id); it shows the error and lets the user retry, go back to the form, or discard.",
+        "component": "[fn:CreateOnError]",
+        "subPath": "nodes/Hermes/modules/CreateOnError",
+        "inheritanceLevel": "echo"
+      },
+      "DeleteConfirm": {
+        "description": "A confirmation prompt shown before a record is deleted, with Cancel and Delete buttons.",
+        "component": "[fn:DeleteConfirm]",
+        "subPath": "nodes/Hermes/modules/DeleteConfirm",
+        "inheritanceLevel": "echo"
+      },
+      "DeleteOnSuccess": {
+        "description": "The confirmation shown after a record is deleted; it offers to return to the overview.",
+        "component": "[fn:DeleteOnSuccess]",
+        "subPath": "nodes/Hermes/modules/DeleteOnSuccess",
+        "inheritanceLevel": "echo"
+      },
+      "DeleteOnError": {
+        "description": "The screen shown when deleting a record fails; it shows the error and lets the user retry or return to the record's details.",
+        "component": "[fn:DeleteOnError]",
+        "subPath": "nodes/Hermes/modules/DeleteOnError",
+        "inheritanceLevel": "echo"
+      }
+    },
+    "components": {
+      "PanelAlpha": {
+        "isGlobal": true,
+        "component": "[fn:PanelAlpha]",
+        "subPath": "globals/components/PanelAlpha",
+        "inheritanceLevel": "echo"
+      },
+      "ListAlpha": {
+        "isGlobal": true,
+        "component": "[fn:ListAlpha]",
+        "subPath": "globals/components/ListAlpha",
+        "inheritanceLevel": "echo"
+      },
+      "HermesInput": {
+        "isGlobal": true,
+        "component": "[fn:HermesInput]",
+        "subPath": "globals/components/HermesInput",
+        "inheritanceLevel": "echo"
+      }
+    },
+    "moduleProps": {
+      "Hermes": "hermes",
+      "ResourceCollection": "[fn:ResourceCollection]",
+      "EditingDraft": "[fn:EditingDraft]",
+      "Validator": "[fn:Validator]",
+      "ResourceIO": "[fn:ResourceIO]"
+    },
+    "instances": {
+      "Default": {
+        "metaData": {
+          "description": "A generic workbench for one kind of record: it lists every record on the left and lets the user view, create, edit, and delete a record in the pane on the right."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "resource_collection",
+            "singular": "Resource Collection",
+            "plural": "Resource Collections",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "resource_class",
+            "singular": "Resource Class",
+            "plural": "Resource Classes"
+          }
+        },
+        "options": {},
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]"
+        }
+      },
+      "EntityClass": {
+        "metaData": {
+          "description": "Manages the registry of entity classes (the types of things modeled, such as plugin or theme): browse the classes and create, edit, or delete a class."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "content_class",
+            "singular": "Entity Class",
+            "plural": "Entity Classes",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "content_class",
+            "singular": "Entity Class",
+            "plural": "Entity Classes"
+          },
+          "inputElements": {
+            "id": {
+              "label": "ID",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "kebabCase"
+              },
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ]
+              }
+            },
+            "singular": {
+              "label": "Singular",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "smallLettersAndUnderscores"
+              }
+            },
+            "plural": {
+              "label": "Plural",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "smallLettersAndUnderscores"
+              }
+            },
+            "description": {
+              "label": "Description",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            }
+          }
+        },
+        "options": {
+          "viewAction": {
+            "label": "Manage Entity Class",
+            "coreFunction": "manageSingleEntityClass"
+          }
+        },
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]",
+          "manageSingleEntityClass": "[fn:manageSingleEntityClass]"
+        }
+      },
+      "Attribute": {
+        "metaData": {
+          "description": "Manages the attributes (the fields, each with a label and a data type) inside the currently selected Attribute Set Version of an entity class: browse them and create, edit, or delete an attribute. Editing only works on a draft version; committed versions are immutable."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "attribute",
+            "singular": "Attribute",
+            "plural": "Attributes",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "attribute",
+            "singular": "Attribute",
+            "plural": "Attributes"
+          },
+          "inputElements": {
+            "id": {
+              "label": "ID",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "kebabCase"
+              },
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ]
+              }
+            },
+            "label": {
+              "label": "Label",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2
+              }
+            },
+            "description": {
+              "label": "Description",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            },
+            "dataType": {
+              "label": "Data Type",
+              "inputType": "select",
+              "constraints": {
+                "required": true
+              },
+              "options": [
+                {
+                  "value": "text",
+                  "label": "Text"
+                },
+                {
+                  "value": "richtext",
+                  "label": "Richtext"
+                },
+                {
+                  "value": "email",
+                  "label": "Email"
+                },
+                {
+                  "value": "url",
+                  "label": "URL"
+                },
+                {
+                  "value": "tel",
+                  "label": "Tel"
+                },
+                {
+                  "value": "boolean",
+                  "label": "Boolean"
+                },
+                {
+                  "value": "integer",
+                  "label": "Integer"
+                },
+                {
+                  "value": "float",
+                  "label": "Float"
+                },
+                {
+                  "value": "date",
+                  "label": "Date"
+                },
+                {
+                  "value": "time",
+                  "label": "Time"
+                },
+                {
+                  "value": "datetime-local",
+                  "label": "Datetime"
+                },
+                {
+                  "value": "json",
+                  "label": "JSON"
+                },
+                {
+                  "value": "unixTimestamp",
+                  "label": "Unix Timestamp"
+                }
+              ]
+            }
+          }
+        },
+        "options": {},
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]"
+        }
+      },
+      "Trait": {
+        "metaData": {
+          "description": "Manages the traits of an entity class — reusable roles (such as \"sellable\") that grant the class extra attributes: browse the traits and create, edit, or delete one. Each trait owns its own versioned attribute sets, edited from the trait's own version surface."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "trait",
+            "singular": "Trait",
+            "plural": "Traits",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "trait",
+            "singular": "Trait",
+            "plural": "Traits"
+          },
+          "inputElements": {
+            "id": {
+              "label": "ID",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "kebabCase"
+              },
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ]
+              }
+            },
+            "label": {
+              "label": "Label",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2
+              }
+            },
+            "description": {
+              "label": "Description",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            }
+          }
+        },
+        "options": {
+          "viewAction": {
+            "label": "Manage Trait Versions",
+            "coreFunction": "manageTraitVersions"
+          }
+        },
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]",
+          "manageTraitVersions": "[fn:manageTraitVersions]"
+        }
+      },
+      "TraitAttribute": {
+        "metaData": {
+          "description": "Manages the attributes (the fields, each with a label and a data type) inside the currently selected version of the trait the user has drilled into: browse them and create, edit, or delete an attribute. Editing only works on a draft version; committed versions are immutable."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "trait_attribute",
+            "singular": "Attribute",
+            "plural": "Attributes",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "trait_attribute",
+            "singular": "Attribute",
+            "plural": "Attributes"
+          },
+          "inputElements": {
+            "id": {
+              "label": "ID",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2,
+                "pattern": "kebabCase"
+              },
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ]
+              }
+            },
+            "label": {
+              "label": "Label",
+              "inputType": "text",
+              "constraints": {
+                "required": true,
+                "minLength": 2
+              }
+            },
+            "description": {
+              "label": "Description",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            },
+            "dataType": {
+              "label": "Data Type",
+              "inputType": "select",
+              "constraints": {
+                "required": true
+              },
+              "options": [
+                {
+                  "value": "text",
+                  "label": "Text"
+                },
+                {
+                  "value": "richtext",
+                  "label": "Richtext"
+                },
+                {
+                  "value": "email",
+                  "label": "Email"
+                },
+                {
+                  "value": "url",
+                  "label": "URL"
+                },
+                {
+                  "value": "tel",
+                  "label": "Tel"
+                },
+                {
+                  "value": "boolean",
+                  "label": "Boolean"
+                },
+                {
+                  "value": "integer",
+                  "label": "Integer"
+                },
+                {
+                  "value": "float",
+                  "label": "Float"
+                },
+                {
+                  "value": "date",
+                  "label": "Date"
+                },
+                {
+                  "value": "time",
+                  "label": "Time"
+                },
+                {
+                  "value": "datetime-local",
+                  "label": "Datetime"
+                },
+                {
+                  "value": "json",
+                  "label": "JSON"
+                },
+                {
+                  "value": "unixTimestamp",
+                  "label": "Unix Timestamp"
+                }
+              ]
+            }
+          }
+        },
+        "options": {},
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]"
+        }
+      },
+      "CompositionDirective": {
+        "metaData": {
+          "description": "Manages the composition directives inside the currently selected Composition Scheme Version of an entity class — each directive declares that the class is composed of a sub-class, with a cardinality and a description: browse them and create, edit, or delete a directive. Editing only works on a draft version; committed versions are immutable."
+        },
+        "coreData": {
+          "resourceCollectionMeta": {
+            "collectionId": "composition_directive",
+            "singular": "Composition Directive",
+            "plural": "Composition Directives",
+            "resourceLabel": null
+          },
+          "resourceClassMeta": {
+            "id": "composition_directive",
+            "singular": "Composition Directive",
+            "plural": "Composition Directives"
+          },
+          "inputElements": {
+            "subClassId": {
+              "label": "Sub-class",
+              "inputType": "select",
+              "dynamicOptions": true,
+              "constraints": {
+                "required": true
+              },
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ]
+              }
+            },
+            "traitId": {
+              "label": "Trait (optional)",
+              "inputType": "select",
+              "dynamicOptionsAsync": true,
+              "displayConditions": {
+                "mode": [
+                  "create"
+                ],
+                "dependsOn": {
+                  "subClassId": [
+                    "*"
+                  ]
+                }
+              }
+            },
+            "cardinalityRules": {
+              "label": "Cardinality",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            },
+            "description": {
+              "label": "Description",
+              "inputType": "text",
+              "constraints": {
+                "required": true
+              }
+            }
+          }
+        },
+        "options": {},
+        "moduleProps": {
+          "Hermes": "hermes",
+          "ResourceCollection": "[fn:ResourceCollection]",
+          "EditingDraft": "[fn:EditingDraft]",
+          "Validator": "[fn:Validator]",
+          "ResourceIO": "[fn:ResourceIO]"
+        },
+        "hooks": {
+          "kernelDidInitialize": "[fn:kernelDidInitialize]",
+          "nodeDidMount": "[fn:nodeDidMount]",
+          "nodeWillUnmount": "[fn:nodeWillUnmount]"
+        },
+        "nodeEvents": {},
+        "nodeEventHandlers": {},
+        "appEventHandlers": {},
+        "coreFunctions": {
+          "fetchAllResources": "[fn:fetchAllResources]",
+          "fetchSingleResource": "[fn:fetchSingleResource]",
+          "createSingleResource": "[fn:createSingleResource]",
+          "updateSingleResource": "[fn:updateSingleResource]",
+          "deleteSingleResource": "[fn:deleteSingleResource]",
+          "registerKernel": "[fn:registerKernel]",
+          "unregisterKernel": "[fn:unregisterKernel]",
+          "resolveFieldOptions": "[fn:resolveFieldOptions]",
+          "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]"
+        }
+      }
+    },
+    "kernelFragments": {},
+    "hooks": {
+      "kernelDidInitialize": "[fn:kernelDidInitialize]",
+      "nodeDidMount": "[fn:nodeDidMount]",
+      "nodeWillUnmount": "[fn:nodeWillUnmount]"
+    },
+    "nodeEvents": {},
+    "nodeEventHandlers": {},
+    "appEventHandlers": {},
+    "coreFunctionSchemas": {
+      "fetchAllResources": {
+        "async": true,
+        "remoteable": false,
+        "params": [],
+        "returns": "array",
+        "description": "Returns the full list of resources for this Hermes instance. Each element should expose at minimum an `id` and a `displayName` (or comparable label) that ResourceList can render. Called by `ResourceIO.loadAllResources` on mount and on every return-to-index."
+      },
+      "fetchSingleResource": {
+        "async": true,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "resourceId",
+            "type": "string"
+          }
+        ],
+        "returns": "object",
+        "description": "Returns the full data for one resource. Called when the user selects a row from ResourceList. G2."
+      },
+      "createSingleResource": {
+        "async": true,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "values",
+            "type": "object"
+          }
+        ],
+        "returns": "object",
+        "description": "Creates a new resource from the working copy. G7."
+      },
+      "updateSingleResource": {
+        "async": true,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "resourceId",
+            "type": "string"
+          },
+          {
+            "name": "values",
+            "type": "object"
+          }
+        ],
+        "returns": "object",
+        "description": "Updates an existing resource. G4."
+      },
+      "deleteSingleResource": {
+        "async": true,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "resourceId",
+            "type": "string"
+          }
+        ],
+        "returns": "void",
+        "description": "Deletes a resource by id. G8."
+      },
+      "registerKernel": {
+        "async": false,
+        "remoteable": false,
+        "params": [],
+        "returns": "void",
+        "description": "Per-instance kernel-init hook, called once from kernelDidInitialize after the Hermes orchestrator is attached. Default no-op; instances needing cross-node coordination override it to register their kernel with Athene (e.g. Attribute / TraitAttribute, for the selection-driven in-place scope refresh)."
+      },
+      "unregisterKernel": {
+        "async": false,
+        "remoteable": false,
+        "params": [],
+        "returns": "void",
+        "description": "Per-instance teardown hook, called once from nodeWillUnmount (MF-1) — the symmetric partner of registerKernel. Instances that registered with Athene override this to unregister (identity-guarded), so a racing async continuation never pokes this torn-down kernel."
+      },
+      "resolveFieldOptions": {
+        "async": false,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "fieldId",
+            "type": "string"
+          }
+        ],
+        "returns": "array",
+        "description": "SYNCHRONOUS options provider for a data-driven select input (C3). Called by getVisibleInputElements for any inputElement marked `dynamicOptions: true`, to source its `options: [{value,label}]` at render time from live domain state instead of a baked enum. Default returns []. Instances with a data-driven select override it (e.g. CompositionDirective returns the live entity-class list for the `subClassId` sub-class picker). Must stay synchronous — it runs inside the synchronous render pass; read already-warm state, never await."
+      },
+      "resolveFieldOptionsAsync": {
+        "async": true,
+        "remoteable": false,
+        "params": [
+          {
+            "name": "fieldId",
+            "type": "string"
+          },
+          {
+            "name": "dependencyValue",
+            "type": "string"
+          }
+        ],
+        "returns": "array",
+        "description": "ASYNCHRONOUS options provider for a DEPENDENT select (the dependent-fields capability). Called by Hermes.loadAsyncFieldOptions when a `dynamicOptionsAsync` field's dependency changes — the dependency edge is declared once in the field's `displayConditions.dependsOn` — passing the new dependency value. Returns [{value,label}] for that value, typically after a fetch of COLD domain state (e.g. the traits of the chosen sub-class, via EntityClass.loadDetail). The result is cached in the dynamicOptionsCache signal + read back synchronously at render, so the render itself never awaits. Default returns []. Instances override it (e.g. CompositionDirective loads the sub-class's traits for `traitId`)."
+      }
+    },
+    "coreFunctions": {
+      "fetchAllResources": "[fn:fetchAllResources]",
+      "fetchSingleResource": "[fn:fetchSingleResource]",
+      "createSingleResource": "[fn:createSingleResource]",
+      "updateSingleResource": "[fn:updateSingleResource]",
+      "deleteSingleResource": "[fn:deleteSingleResource]",
+      "registerKernel": "[fn:registerKernel]",
+      "unregisterKernel": "[fn:unregisterKernel]",
+      "resolveFieldOptions": "[fn:resolveFieldOptions]",
+      "resolveFieldOptionsAsync": "[fn:resolveFieldOptionsAsync]"
+    },
+    "buildScripts": {},
+    "buildArtifacts": {},
+    "buildArtifactSchemas": {},
+    "styles": {
+      "inherit": true,
+      "content": null,
+      "concatenatedFrom": []
+    },
+    "kernelMethods": {},
+    "inheritanceChain": {
+      "alpha": {
+        "nodeId": null,
+        "exists": false
+      },
+      "bravo": {
+        "nodeId": null,
+        "exists": false
+      },
+      "charlie": {
+        "nodeId": null,
+        "exists": false
+      },
+      "delta": {
+        "nodeId": null,
+        "exists": false
+      },
+      "echo": {
+        "nodeId": "Hermes",
+        "exists": true
+      }
+    },
+    "KernelClass": "[fn:CompiledNodeKernel]"
+  },
+  "runtimeDataDidChange": "[fn:runtimeDataDidChange]",
+  "_e$": "[fn:anonymous]",
+  "hermes": {
+    "resourceCollection": {},
+    "editingDraft": {},
+    "validator": {},
+    "resourceIO": {}
+  },
+  "_moduleMountRegistry": {},
+  "getMountedModules": "[fn:anonymous]",
+  "signals": {
+    "mode": {
+      "id": "mode",
+      "type": "string",
+      "value": "index",
+      "set": "[fn:set]"
+    },
+    "status": {
+      "id": "status",
+      "type": "string",
+      "value": "normal",
+      "set": "[fn:set]"
+    },
+    "selectedResourceId": {
+      "id": "selectedResourceId",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "indexData": {
+      "id": "indexData",
+      "type": "array",
+      "value": [],
+      "set": "[fn:set]"
+    },
+    "singleResourceData": {
+      "id": "singleResourceData",
+      "type": "object",
+      "value": null,
+      "set": "[fn:set]"
+    },
+    "singleResourceDataWorkingCopy": {
+      "id": "singleResourceDataWorkingCopy",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    },
+    "singleResourceDataEvaluation": {
+      "id": "singleResourceDataEvaluation",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    },
+    "loadingResource": {
+      "id": "loadingResource",
+      "type": "boolean",
+      "value": true,
+      "set": "[fn:set]"
+    },
+    "resourceError": {
+      "id": "resourceError",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "systemMessage": {
+      "id": "systemMessage",
+      "type": "string",
+      "value": "",
+      "set": "[fn:set]"
+    },
+    "dynamicOptionsCache": {
+      "id": "dynamicOptionsCache",
+      "type": "object",
+      "value": {},
+      "set": "[fn:set]"
+    }
+  },
+  "_forceRerender": "[fn:anonymous]"
+}

@@ -1,0 +1,542 @@
+// =============================================================================
+// HERMES NODE
+// View-specific styling for the generic CRUD UI engine — list rail on
+// the left, content body on the right. Uses the same panel + scanline
+// vocabulary as morpheus/devApp's view-scoped partials.
+// =============================================================================
+
+@use 'sass:color';
+@use 'variables' as *;
+@use 'panel-chrome' as panel;
+
+#hermes {
+  padding:    2rem;
+  height:     100%;
+  overflow-y: auto;
+
+  // -------------------------------------------------------------------------
+  // Layout — list rail + content body
+  // -------------------------------------------------------------------------
+
+  .hermes-grid {
+    display:               grid;
+    grid-template-columns: 300px 1fr;
+    gap:                   1.5rem;
+    align-items:           start;
+  }
+
+  // Rail (left column) and content body (right column) — rail rules
+  // live in `_panel-alpha.scss` + `_list-alpha.scss` (lifted to globals
+  // at delta D1). Content body remains here below.
+
+  // -------------------------------------------------------------------------
+  // Content body (right pane) — dispatched by displayMode × actionState
+  // -------------------------------------------------------------------------
+
+  .hermes-content-body {
+    @include panel.panel-chrome;
+    padding: 1.5rem 1.75rem;
+  }
+
+  .hermes-content-inner {
+    position: relative;
+    z-index:  2;
+  }
+
+  // -------------------------------------------------------------------------
+  // Mode headers — shared chrome for IndexHeader, ViewHeader,
+  // (future) EditHeader, CreateHeader, DeleteHeader. Each variant adds
+  // its own affordances on top of the shared shape.
+  // -------------------------------------------------------------------------
+
+  .hermes-mode-header {
+    display:         flex;
+    align-items:     flex-end;
+    justify-content: space-between;
+    gap:             1.5rem;
+    padding-bottom:  1rem;
+    margin-bottom:   1.25rem;
+    border-bottom:   1px solid rgba(14, 110, 158, 0.3);
+
+    h2 {
+      margin: 0;
+      line-height: 1.1;
+    }
+  }
+
+  .hermes-mode-titling {
+    display:        flex;
+    flex-direction: column;
+    gap:            .35rem;
+    min-width:      0;
+  }
+
+  .hermes-mode-eyebrow {
+    @include panel.panel-eyebrow;
+  }
+
+  .hermes-mode-meta {
+    display:        flex;
+    flex-direction: column;
+    align-items:    flex-end;
+    gap:            .1rem;
+    flex-shrink:    0;
+  }
+
+  .hermes-mode-meta-value {
+    font-family:  'Courier New', monospace;
+    font-size:    1.15rem;
+    color:        $secondary;
+    text-shadow:  0 0 10px rgba(165, 249, 252, 0.35);
+    line-height:  1;
+  }
+
+  .hermes-mode-meta-label {
+    @include panel.panel-eyebrow;
+    font-size: .6rem;
+  }
+
+  // ViewHeader puts the titling block on the left + Edit button on
+  // the right. EditHeader keeps the titling block on the left + a
+  // Discard / Save action cluster on the right.
+  .hermes-mode-header--view,
+  .hermes-mode-header--edit {
+    align-items: center;
+
+    .hermes-mode-titling {
+      flex: 1;
+    }
+  }
+
+  .hermes-mode-actions {
+    display:     flex;
+    align-items: center;
+    gap:         .5rem;
+    flex-shrink: 0;
+  }
+
+  .hermes-back-button {
+    background:     transparent;
+    border:         1px solid $secondary-beta;
+    border-radius:  .15rem;
+    color:          $secondary;
+    padding:        .3rem .7rem;
+    font-size:      .7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor:         pointer;
+    flex-shrink:    0;
+    transition:     background .15s ease, border-color .15s ease, text-shadow .15s ease;
+
+    &:hover:not(:disabled) {
+      background:   rgba(14, 110, 158, 0.2);
+      border-color: $secondary;
+      text-shadow:  0 0 6px rgba(165, 249, 252, 0.4);
+    }
+
+    &:disabled {
+      opacity: .5;
+      cursor:  not-allowed;
+    }
+  }
+
+  // Primary affordance — shares the back-button's chrome (transparent
+  // fill, $secondary-beta border) so a Discard + Save pair sits as a
+  // visually balanced cluster. The semantic distinction (Save is the
+  // commit, Discard is the abandon) is carried by the labels, not by
+  // visual weight. Hover adds a soft cyan-tinted fill + faint inset
+  // glow as feedback.
+  //
+  // Variants: --edit (in ViewHeader) and --save (in EditHeader); same
+  // chrome, different copy.
+  .hermes-action-button {
+    background:     transparent;
+    border:         1px solid $secondary-beta;
+    border-radius:  .15rem;
+    color:          $secondary;
+    padding:        .3rem .85rem;
+    font-size:      .7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight:    500;
+    cursor:         pointer;
+    flex-shrink:    0;
+    text-shadow:    0 0 6px rgba(165, 249, 252, 0.18);
+    outline:        none;
+    transition:     background .15s ease, border-color .15s ease, text-shadow .15s ease, box-shadow .15s ease;
+
+    &:hover:not(:disabled) {
+      background:   rgba(14, 110, 158, 0.18);
+      border-color: $secondary;
+      text-shadow:  0 0 8px rgba(165, 249, 252, 0.4);
+      box-shadow:   inset 0 0 12px -4px rgba(165, 249, 252, 0.15);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px rgba(165, 249, 252, 0.35);
+    }
+
+    &:disabled {
+      opacity: .4;
+      cursor:  not-allowed;
+    }
+  }
+
+  // Danger variant — used for the Delete button in ViewHeader, the
+  // Delete confirm button in DeleteConfirm, and the Try again button
+  // in DeleteOnError. Red border + red text mark the destructive
+  // affordance. Hover layers a soft red-tinted fill + brightens the
+  // border, matching the cyan-button hover shape with red palette.
+  .hermes-action-button--danger {
+    border-color: #b91c1c;
+    color:        #f87171;
+    text-shadow:  0 0 6px rgba(220, 38, 38, 0.2);
+
+    &:hover:not(:disabled) {
+      background:   rgba(127, 29, 29, 0.22);
+      border-color: #f87171;
+      text-shadow:  0 0 8px rgba(248, 113, 113, 0.45);
+      box-shadow:   inset 0 0 12px -4px rgba(248, 113, 113, 0.2);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.4);
+    }
+  }
+
+  // Drill variant — the "go deeper" / forward action in ViewHeader, rendered
+  // when an instance sets the generic `viewAction` option (T3.1; first consumer
+  // is the Trait instance's "Manage Trait Versions"). A persistent soft cyan
+  // fill + a nudging arrow mark it as a step INTO a nested surface, distinct
+  // from the ghost Edit/Delete mutate actions beside it.
+  .hermes-action-button--drill {
+    background: rgba(14, 110, 158, 0.16);
+
+    .hermes-action-arrow {
+      margin-left: .4rem;
+      display:     inline-block;
+      transition:  transform .15s ease;
+    }
+
+    &:hover:not(:disabled) .hermes-action-arrow {
+      transform: translateX(2px);
+    }
+  }
+
+  // Pipe divider between the Edit/Delete mutate actions and the trailing drill
+  // ("go deeper") affordance in the view-mode action row. $secondary-beta is the
+  // action buttons' own border colour, so the divider reads as part of the same
+  // cluster chrome rather than a foreign mark.
+  .hermes-action-separator {
+    color:       $secondary-beta;
+    font-size:   1rem;
+    line-height: 1;
+    font-weight: 300;
+    user-select: none;
+  }
+
+  // -------------------------------------------------------------------------
+  // Index body — descriptive prompt under the IndexHeader
+  // -------------------------------------------------------------------------
+
+  .hermes-index-prompt {
+    color:          $tertiary;
+    font-size:      .8rem;
+    line-height:    1.5;
+    margin:         0;
+  }
+
+  // -------------------------------------------------------------------------
+  // View body — labeled field list
+  // -------------------------------------------------------------------------
+
+  .hermes-fields {
+    display:               grid;
+    grid-template-columns: 160px 1fr;
+    gap:                   .75rem 1.5rem;
+    margin:                0;
+
+    dt {
+      color:          $secondary-darker;
+      font-size:      .7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding-top:    .2rem;
+    }
+
+    dd {
+      margin:    0;
+      color:     $tertiary;
+      font-size: .85rem;
+      min-width: 0;
+
+      .stage {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size:      .65rem;
+        padding:        .1rem .4rem;
+        border:         1px solid $secondary-darker;
+        border-radius:  .15rem;
+        color:          $secondary;
+      }
+    }
+  }
+
+  .hermes-field-html {
+    line-height: 1.5;
+
+    p {
+      margin: 0 0 .5rem;
+      &:last-child { margin-bottom: 0; }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Edit body — input form bound to singleResourceDataWorkingCopy
+  // -------------------------------------------------------------------------
+
+  .hermes-edit-body {
+    .morpheus-error-box {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  .hermes-edit-fields {
+    display:        flex;
+    flex-direction: column;
+    gap:            1rem;
+  }
+
+  .hermes-input {
+    display:        flex;
+    flex-direction: column;
+    gap:            .4rem;
+  }
+
+  .hermes-input-label {
+    color:          $secondary-darker;
+    font-size:      .7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight:    500;
+  }
+
+  .hermes-input-control {
+    background:     rgba(0, 12, 21, 0.7);
+    border:         1px solid $secondary-beta;
+    border-radius:  .15rem;
+    color:          $secondary;
+    padding:        .5rem .65rem;
+    font-size:      .9rem;
+    font-family:    inherit;
+    transition:     border-color .15s ease, box-shadow .15s ease;
+
+    &:focus {
+      border-color: $secondary;
+      outline:      none;
+      box-shadow:   0 0 0 2px rgba(165, 249, 252, 0.18);
+    }
+
+    &::placeholder {
+      color: rgba(165, 249, 252, 0.3);
+    }
+  }
+
+  // G5: validation error state — the wrapper gets `.has-errors` when
+  // singleResourceDataEvaluation has entries for this field. Border
+  // shifts to the morpheus-error red so the invalid field is locatable
+  // at a glance, and the error list reads as a small advisory column
+  // under the input.
+  .hermes-input.has-errors {
+
+    .hermes-input-control {
+      border-color: #dc2626;
+
+      &:focus {
+        border-color: #dc2626;
+        box-shadow:   0 0 0 2px rgba(220, 38, 38, 0.25);
+      }
+    }
+  }
+
+  // Select variant — strip the native dropdown chrome and overlay a
+  // small cyan chevron so the control matches the rest of the input
+  // catalog. SVG is inlined to avoid a separate asset.
+  .hermes-input--select .hermes-input-control {
+    appearance:          none;
+    -webkit-appearance:  none;
+    padding-right:       2rem;
+    background-image:    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 4.5l3 3 3-3' fill='none' stroke='%2300b9d8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:   no-repeat;
+    background-position: right .65rem center;
+    background-size:     12px 12px;
+    cursor:              pointer;
+
+    // Make the <option> popup readable in dark mode where browsers
+    // default options to white-on-white on focused-state surfaces.
+    option {
+      background-color: #0a1620;
+      color:            $secondary;
+    }
+  }
+
+  .hermes-input-errors {
+    list-style:  none;
+    margin:      .1rem 0 0;
+    padding:     0;
+    color:       #f87171;
+    font-size:   .75rem;
+    line-height: 1.4;
+
+    li {
+      padding-left: .9rem;
+      position:     relative;
+
+      &::before {
+        content:  '✗';
+        position: absolute;
+        left:     0;
+        color:    #dc2626;
+        font-weight: bold;
+      }
+
+      & + li {
+        margin-top: .1rem;
+      }
+    }
+  }
+
+  // Visible read-only fallback when an inputType isn't supported yet.
+  .hermes-input--unsupported {
+    .hermes-input-unsupported-note {
+      color:          $tertiary;
+      font-size:      .8rem;
+      padding:        .55rem .65rem;
+      border:         1px dashed rgba(14, 110, 158, 0.4);
+      border-radius:  .15rem;
+      background:     rgba(0, 12, 21, 0.4);
+
+      code {
+        font-family: 'Courier New', monospace;
+        color:       $secondary;
+        font-size:   .8rem;
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Status screens (G6) — EditOnSuccess, EditOnError, and future
+  // CreateOnSuccess / CreateOnError / DeleteOnSuccess / DeleteOnError.
+  // Shared layout (icon + heading + message + actions cluster), with
+  // success / error variants tinting the accent.
+  // -------------------------------------------------------------------------
+
+  .hermes-status-screen {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    text-align:     center;
+    padding:        1.5rem .5rem;
+    gap:            1rem;
+  }
+
+  .hermes-status-header {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:            .5rem;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .hermes-status-icon {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           3rem;
+    height:          3rem;
+    border-radius:   50%;
+    font-size:       1.5rem;
+    font-weight:     bold;
+    line-height:     1;
+  }
+
+  .hermes-status-message {
+    color:          $tertiary;
+    font-size:      .9rem;
+    line-height:    1.5;
+    max-width:      28rem;
+    margin:         0;
+
+    strong {
+      color: $secondary;
+    }
+  }
+
+  .hermes-status-actions {
+    display:     flex;
+    align-items: center;
+    gap:         .5rem;
+    margin-top:  .5rem;
+  }
+
+  // Success variant — soft cyan halo on the icon, matches devApp's
+  // success treatment.
+  .hermes-status-screen--success {
+    .hermes-status-icon {
+      color:        $secondary;
+      background:   rgba(14, 110, 158, 0.18);
+      border:       1px solid $secondary;
+      text-shadow:  0 0 12px rgba(165, 249, 252, 0.5);
+      box-shadow:   inset 0 0 16px -4px rgba(165, 249, 252, 0.3);
+    }
+  }
+
+  // Error variant — morpheus-error red palette.
+  .hermes-status-screen--error {
+    .hermes-status-icon {
+      color:        #f87171;
+      background:   rgba(127, 29, 29, 0.18);
+      border:       1px solid #dc2626;
+      text-shadow:  0 0 12px rgba(220, 38, 38, 0.4);
+      box-shadow:   inset 0 0 16px -4px rgba(220, 38, 38, 0.25);
+    }
+
+    .hermes-status-message {
+      color: #f87171;
+
+      strong {
+        color: inherit;
+      }
+    }
+  }
+
+  // Confirm variant — amber/yellow halo, used for destructive-action
+  // confirmation screens (DeleteConfirm + future variants). Sits between
+  // success (calm cyan) and error (alarming red) tonally — caution
+  // without alarm; "are you sure?" not "something is wrong."
+  .hermes-status-screen--confirm {
+    .hermes-status-icon {
+      color:        #fbbf24;
+      background:   rgba(120, 53, 15, 0.18);
+      border:       1px solid #f59e0b;
+      text-shadow:  0 0 12px rgba(251, 191, 36, 0.45);
+      box-shadow:   inset 0 0 16px -4px rgba(251, 191, 36, 0.3);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Shared signal states
+  // -------------------------------------------------------------------------
+
+  .hermes-loading {
+    padding:        2rem;
+    text-align:     center;
+    color:          $secondary-darker;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size:      .75rem;
+  }
+}

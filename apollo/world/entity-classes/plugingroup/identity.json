@@ -1,0 +1,7 @@
+{
+  "id": "plugingroup",
+  "singular": "plugin_group",
+  "plural": "plugin_groups",
+  "description": "Some description",
+  "profileImgUrl": null
+}

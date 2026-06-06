@@ -1,0 +1,156 @@
+// =============================================================================
+// CONTENT CLASS WORKBENCH PAGE-NODE
+// Per-class management surface — PageHeaderAlpha at top, horizontal
+// tab strip below, content area filling the rest. Each sub-manager
+// (Attributes, Traits, …) renders inside the content area.
+// =============================================================================
+
+@use 'variables' as *;
+
+#entity-class-workbench {
+  height:         100%;
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+}
+
+// -----------------------------------------------------------------------------
+// Tab strip
+// -----------------------------------------------------------------------------
+
+.workbench-tabs {
+  display:        flex;
+  align-items:    flex-end;
+  gap:            .25rem;
+  padding:        0 2rem;
+  border-bottom:  1px solid $secondary-beta;
+  flex-shrink:    0;
+}
+
+.workbench-tab {
+  appearance:     none;
+  background:     transparent;
+  border:         none;
+  border-bottom:  2px solid transparent;
+  margin-bottom:  -1px; // overlap the strip's bottom border
+  padding:        .75rem 1.25rem;
+  color:          $secondary-darker;
+  font-size:      .8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight:    500;
+  cursor:         pointer;
+  transition:     color .15s ease, border-color .15s ease, text-shadow .15s ease;
+
+  &:hover:not(.is-active) {
+    color: $secondary;
+  }
+
+  &.is-active {
+    color:              $secondary;
+    border-bottom-color: $secondary;
+    text-shadow:        0 0 8px rgba(165, 249, 252, 0.4);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Content area
+// -----------------------------------------------------------------------------
+
+// Content area itself has no padding — each sub-manager owns its
+// inner spacing. Hermes (mounted in the Attributes tab) brings its
+// own `#hermes { padding: 2rem }`; the placeholder div owns its own
+// padding too. This avoids double-padding when nested engines render.
+.workbench-content {
+  flex:       1 1 auto;
+  min-height: 0;
+  overflow:   auto;
+}
+
+// Quiet, centered, full-area message in the workbench content area. Two uses,
+// one treatment: the "coming soon" placeholder for not-yet-built tabs, and the
+// "create your first version" empty-state that stands in for a Hermes editor
+// when its tab has no version selected yet.
+.workbench-placeholder,
+.workbench-empty-state {
+  color:       $secondary-darker;
+  font-style:  italic;
+  text-align:  center;
+  padding:     3rem;
+  opacity:     .7;
+}
+
+// -----------------------------------------------------------------------------
+// Version-tab surface — Chronos version rail (left) + the co-mounted Hermes
+// editor, or the "create your first version" empty-state, on the right. One
+// flex row owning the tab's full height; the rail's version list and the editor
+// body each scroll on their own. Used by the Attributes, Composition, and
+// (nested) Traits-L2 tabs.
+// -----------------------------------------------------------------------------
+
+.version-surface {
+  display:    flex;
+  height:     100%;      // fill the workbench-content height (block parent), OR
+  min-height: 0;
+  flex:       1 1 auto;  // …fill the height left under the Traits back-bar
+                         // (flex-column parent). The two don't conflict: in the
+                         // block case `flex` is inert; in the column case the
+                         // `height: 100%` basis is trimmed to fit by flex-shrink.
+}
+
+.version-surface-main {
+  flex:       1 1 auto;  // editor / empty-state pane (the Chronos rail is fixed-width)
+  min-width:  0;
+  min-height: 0;
+}
+
+// Traits-L2 wrapper: a full-width back/scope bar on top, the version-surface
+// (rail + editor) filling the rest.
+.trait-version-surface {
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  min-height:     0;
+}
+
+// The bar above the version surface: the "← Back to Traits" exit + the
+// drilled-into trait's name as scope context.
+.trait-version-bar {
+  display:     flex;
+  align-items: baseline;
+  gap:         .85rem;
+  padding:     1rem 2rem .25rem;
+  flex-shrink: 0;
+
+  .workbench-back { margin-bottom: 0; }  // override the standalone bottom margin in this row
+}
+
+.trait-version-scope {
+  color:       $secondary;
+  font-size:   .85rem;
+  font-weight: 500;
+  text-shadow: 0 0 6px rgba(165, 249, 252, 0.18);
+}
+
+// "← Back to Traits" — the level-2 → level-1 return control (the exit door the
+// workbench owns; the entry button lives in Hermes/ViewHeader). A quiet text
+// affordance whose arrow nudges left on hover, mirroring the drill button's
+// right-nudge.
+.workbench-back {
+  display:        inline-block;
+  background:     none;
+  border:         none;
+  color:          $secondary;
+  cursor:         pointer;
+  font-size:      .75rem;
+  letter-spacing: 0.04em;
+  padding:        .3rem 0;
+  margin-bottom:  .75rem;
+  text-shadow:    0 0 6px rgba(165, 249, 252, 0.18);
+  transition:     text-shadow .15s ease, transform .15s ease;
+
+  &:hover {
+    text-shadow: 0 0 9px rgba(165, 249, 252, 0.45);
+    transform:   translateX(-2px);
+  }
+}

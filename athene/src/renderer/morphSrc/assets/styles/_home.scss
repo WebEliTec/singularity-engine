@@ -1,0 +1,31 @@
+// =============================================================================
+// HOME PAGE-NODE
+// Brand-identity surface — engine brand at top, then a three-column content
+// row below it. The entity-class list box (PanelAlpha) occupies the left
+// column; the other two tracks are reserved for surfaces that land later.
+// =============================================================================
+
+#home {
+  padding:    2rem;
+  height:     100%;
+  overflow-y: auto;
+}
+
+// ~3rem of breathing room between the brand logo and the content row. Scoped
+// to #home so PageHeaderAlpha's inline logo (which reuses this wrapper class
+// on the registry / workbench page headers, with its own scoped rules) is
+// unaffected.
+#home .singularity-logo-animated-01 {
+  margin-bottom: 3rem;
+}
+
+// Three-column content row. The left track is pinned to the old rail width
+// (28rem, shrinkable on a narrow window via minmax); the two 1fr tracks split
+// the remaining width. The single PanelAlpha child auto-places into the left
+// track; tracks 2–3 stay empty until later surfaces fill them.
+.home-body {
+  display:               grid;
+  grid-template-columns: minmax(0, 28rem) 1fr 1fr;
+  gap:                   2rem;
+  align-items:           start;
+}

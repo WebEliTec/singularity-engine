@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+.vite/
+
+# Vendored framework — a symlink to the morpheus-core checkout
+# (src/renderer/morpheus -> morpheus_central/morpheus); resynced separately.
+athene/src/renderer/morpheus
+
+# Editor / OS cruft
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+
+# Screenshots
+Screenshot*.png
+
+# Environment
+.env
+.env.*

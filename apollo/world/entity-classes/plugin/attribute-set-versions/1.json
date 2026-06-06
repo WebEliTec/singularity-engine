@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "lifeCycleStage": "committed",
+  "createdAt": "2026-05-01T09:00:00.000Z",
+  "committedAt": "2026-05-02T14:30:00.000Z",
+  "attributes": [
+    { "id": "name", "label": "Name", "dataType": "text", "description": "The plugin's display name.", "isRequired": true },
+    { "id": "slug", "label": "Slug", "dataType": "text", "description": "URL-safe identifier.", "isRequired": true },
+    { "id": "version", "label": "Version", "dataType": "text", "description": "Latest released version.", "isRequired": false }
+  ]
+}

@@ -1,0 +1,169 @@
+// =============================================================================
+// APP SHELL + SIDEBAR
+// Root.jsx renders <Sidebar/> alongside a <main> region holding the
+// dispatched page-node. The shell is a flex row spanning the full
+// viewport height; the sidebar is fixed-width (collapsed/expanded);
+// <main> takes whatever's left.
+// =============================================================================
+
+@use 'sass:color';
+@use 'variables' as *;
+
+// -----------------------------------------------------------------------------
+// Shell layout
+// -----------------------------------------------------------------------------
+
+#root-shell {
+  display:  flex;
+  height:   100%;
+}
+
+#root-main {
+  flex:           1 1 auto;
+  min-width:      0;
+  height:         100%;
+  overflow:       hidden;
+  position:       relative;
+}
+
+// -----------------------------------------------------------------------------
+// Sidebar — collapsed/expanded
+// -----------------------------------------------------------------------------
+
+.sidebar {
+  flex-shrink:    0;
+  width:          56px;
+  height:         100%;
+  background:     linear-gradient(180deg, rgba(0, 20, 30, 0.92) 0%, rgba(0, 12, 21, 0.85) 100%);
+  border-right:   1px solid $secondary-beta;
+  display:        flex;
+  flex-direction: column;
+  transition:     width .18s ease;
+  position:       relative;
+  z-index:        10;
+
+  &.is-expanded {
+    width: 250px;
+  }
+}
+
+// Toggle button — sits at the top, flips collapsed/expanded.
+.sidebar-toggle {
+  appearance:     none;
+  background:     transparent;
+  border:         none;
+  border-bottom:  1px solid rgba(14, 110, 158, 0.25);
+  cursor:         pointer;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  height:         48px;
+  padding:        0;
+  color:          $secondary;
+  transition:     background .15s ease;
+
+  &:hover {
+    background: rgba(14, 110, 158, 0.12);
+  }
+}
+
+.sidebar-toggle-glyph {
+  font-size:    1.1rem;
+  line-height:  1;
+  color:        $secondary-darker;
+  text-shadow:  0 0 8px rgba(165, 249, 252, 0.3);
+}
+
+// Nav region — vertical stack of affordances below the toggle.
+.sidebar-nav {
+  display:        flex;
+  flex-direction: column;
+  padding:        .5rem .3rem;
+  gap:            .25rem;
+}
+
+// Affordance — a single navigation row. Layout differs by collapsed
+// vs expanded state, but the rule for the affordance itself stays the
+// same; the label visibility is the only state-driven difference.
+.sidebar-affordance {
+  appearance:     none;
+  background:     transparent;
+  border:         1px solid transparent;
+  border-radius:  .2rem;
+  cursor:         pointer;
+  display:        flex;
+  align-items:    center;
+  gap:            .65rem;
+  padding:        .55rem .6rem;
+  color:          $secondary;
+  font-size:      .9rem;
+  text-align:     left;
+  transition:     background .15s ease, border-color .15s ease;
+
+  &:hover:not(:disabled) {
+    background:   rgba(14, 110, 158, 0.12);
+    border-color: $secondary-beta;
+  }
+
+  // Disabled-without-current (defensive — in practice we only ever
+  // disable the current one) reads as inert.
+  &:disabled:not(.is-current) {
+    opacity: .35;
+    cursor:  default;
+  }
+
+  // Current surface: highlighted "you are here" state. Disabled too,
+  // so cursor stays default and no hover effect fires.
+  &.is-current {
+    background: linear-gradient(
+      90deg,
+      rgba(14, 110, 158, 0.32) 0%,
+      rgba(14, 110, 158, 0.12) 100%
+    );
+    border-color: $secondary-beta;
+    box-shadow:   inset 0 0 0 1px rgba(165, 249, 252, 0.15);
+    cursor:       default;
+
+    .sidebar-affordance-glyph {
+      color:       color.adjust($secondary, $lightness: 6%);
+      text-shadow: 0 0 12px rgba(165, 249, 252, 0.5);
+    }
+
+    .sidebar-affordance-label {
+      color:       color.adjust($secondary, $lightness: 6%);
+      text-shadow: 0 0 12px rgba(165, 249, 252, 0.5);
+    }
+  }
+}
+
+.sidebar-affordance-glyph {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           1.5rem;
+  font-size:       1.1rem;
+  line-height:     1;
+  color:           $secondary-darker;
+  text-shadow:     0 0 8px rgba(165, 249, 252, 0.25);
+  flex-shrink:     0;
+}
+
+.sidebar-affordance-label {
+  color:        $secondary;
+  font-weight:  500;
+  font-size:    .9rem;
+  text-shadow:  0 0 8px rgba(165, 249, 252, 0.25);
+  white-space:  nowrap;
+  overflow:     hidden;
+  // Collapsed sidebar hides the label entirely (width-collapse via
+  // max-width zeros the inline footprint so the row centers around the
+  // glyph). When expanded, the label expands back in.
+  max-width:    0;
+  opacity:      0;
+  transition:   max-width .18s ease, opacity .12s ease;
+}
+
+.sidebar.is-expanded .sidebar-affordance-label {
+  max-width: 12rem;
+  opacity:   1;
+}

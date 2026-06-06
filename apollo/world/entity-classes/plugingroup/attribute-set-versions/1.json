@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "lifeCycleStage": "committed",
+  "createdAt": "2026-06-03T08:15:29.637Z",
+  "committedAt": "2026-06-03T08:15:56.453Z",
+  "attributes": [
+    {
+      "id": "name",
+      "label": "name",
+      "dataType": "text",
+      "description": "Name of the plugin group",
+      "isRequired": false
+    }
+  ]
+}
