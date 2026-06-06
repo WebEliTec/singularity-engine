@@ -92,19 +92,20 @@ Commit a version only once it is `final`, as a single atomic commit — message 
 
 ## Layout
 
-The framework and the model are two sibling directories in the project:
+The framework and the model are two sibling directories inside the development vault, which lives in the project:
 
 ```
-titan-framework/            ← this framework
-  README.md
-  schema.formal.md
-  schema.prose.md
-  reference/
-    declare-templates.md
-titan-model/                ← the project's domain model
-  v1/
-  v2/
-  …
+titan-development-vault/
+  titan-framework/            ← this framework
+    README.md
+    schema.formal.md
+    schema.prose.md
+    reference/
+      declare-templates.md
+  titan-model/                ← the project's domain model
+    v1/
+    v2/
+    …
 ```
 
 - **`titan-framework/README.md`** — this front door.

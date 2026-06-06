@@ -7,22 +7,23 @@ The plain-language companion to `schema.formal.md` — what a model document is,
 The model is **living**: it evolves through **version directories** under `titan-model/`, each holding one version of the model. The schema (this file and `schema.formal.md`) lives in the framework, `titan-framework/`, separate from the model.
 
 ```
-titan-framework/
-  README.md
-  schema.formal.md
-  schema.prose.md
-  reference/
-titan-model/
-  <version>/
-      STATUS
-      formal/
-        structure.formal.md
-        invariants.formal.md
-        dynamics.formal.md
-      prose/
-        structure.prose.md
-        invariants.prose.md
-        dynamics.prose.md
+titan-development-vault/
+  titan-framework/
+    README.md
+    schema.formal.md
+    schema.prose.md
+    reference/
+  titan-model/
+    <version>/
+        STATUS
+        formal/
+          structure.formal.md
+          invariants.formal.md
+          dynamics.formal.md
+        prose/
+          structure.prose.md
+          invariants.prose.md
+          dynamics.prose.md
 ```
 
 For each, the **`*.formal.md`** is its precise, formal statement; the **`*.prose.md`** is the same in plain language. The formal is specified first; the prose is derived from it.
