@@ -10,6 +10,9 @@ dist/
 # (src/renderer/morpheus -> morpheus_central/morpheus); resynced separately.
 athene/src/renderer/morpheus
 
+# Generated diagnostics output (morpheus runtime snapshots / lifecycle logs / timeline)
+athene/src/renderer/diagnostics/
+
 # Editor / OS cruft
 .vscode/
 .DS_Store
@@ -23,3 +26,4 @@ Screenshot*.png
 # Environment
 .env
 .env.*
+athene/.env
